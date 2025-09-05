@@ -14,6 +14,7 @@ class Cube2(gym.Env):
         self.action_space = gym.spaces.Discrete(6)
         self.observation_space = gym.spaces.Box(low=0, high=1, shape=(24, 6))
         self.state = np.zeros((6, 2, 2))
+        self.step_count = 0
     
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
@@ -24,9 +25,11 @@ class Cube2(gym.Env):
         self.state[3] = np.ones((2, 2)) * LEFT 
         self.state[4] = np.ones((2, 2)) * UP
         self.state[5] = np.ones((2, 2)) * DOWN
+        self.step_count = 0
         return self.state, {}
     
     def step(self, action):
+        self.step_count += 1
         new_state = self.state.copy()
 
         # Front Clockwise
@@ -129,6 +132,26 @@ class Cube2(gym.Env):
             new_state[LEFT, 0, 1]  = self.state[BACK, 0, 1] 
             new_state[BACK, 0, 0]  = self.state[RIGHT, 0, 0]
             new_state[BACK, 0, 1]  = self.state[RIGHT, 0, 1]
+        # Down Clockwise
+        if action == 10:
+            new_state[FRONT, 1, 0] = self.state[LEFT, 1, 0]
+            new_state[FRONT, 1, 1] = self.state[LEFT, 1, 1]
+            new_state[LEFT, 1, 0]  = self.state[BACK, 1, 0]
+            new_state[LEFT, 1, 1]  = self.state[BACK, 1, 1]
+            new_state[BACK, 1, 0]  = self.state[RIGHT, 1, 0]
+            new_state[BACK, 1, 1]  = self.state[RIGHT, 1, 1]
+            new_state[RIGHT, 1, 0] = self.state[FRONT, 1, 0]
+            new_state[RIGHT, 1, 1] = self.state[FRONT, 1, 1]
+        # Down Counter-Clockwise
+        if action == 11:
+            new_state[LEFT, 1, 0]  = self.state[FRONT, 1, 0]
+            new_state[LEFT, 1, 1]  = self.state[FRONT, 1, 1]
+            new_state[BACK, 1, 0]  = self.state[LEFT, 1, 0] 
+            new_state[BACK, 1, 1]  = self.state[LEFT, 1, 1] 
+            new_state[RIGHT, 1, 0] = self.state[BACK, 1, 0] 
+            new_state[RIGHT, 1, 1] = self.state[BACK, 1, 1] 
+            new_state[FRONT, 1, 0] = self.state[RIGHT, 1, 0]
+            new_state[FRONT, 1, 1] = self.state[RIGHT, 1, 1]
 
         self.state = new_state
-        return self.state, 0, False, False, {}
+        return self.state.copy(), 0, False, self.step_count >= 100, {}

@@ -6,8 +6,7 @@ def train():
     obs, _ = env.reset()
     for i in range(4):
         # action = env.action_space.sample()
-        obs, reward, terminated, truncated, _ = env.step(8)
-        obs, reward, terminated, truncated, _ = env.step(9)
+        obs, reward, terminated, truncated, _ = env.step(10)
         print(obs)
         print("--------------------------------")
         if terminated or truncated:
