@@ -154,4 +154,10 @@ class Cube2(gym.Env):
             new_state[FRONT, 1, 1] = self.state[RIGHT, 1, 1]
 
         self.state = new_state
-        return self.state.copy(), 0, False, self.step_count >= 100, {}
+        return self.state.copy(), 1 if self._is_solved() else -1, self._is_solved(), self.step_count >= 100, {}
+    
+    def _is_solved(self):
+        for i in range(6):
+            if np.mean(self.state[i]) != self.state[i][0][0]:
+                return False
+        return True

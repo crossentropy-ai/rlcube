@@ -11,5 +11,5 @@ def train():
         print("--------------------------------")
         if terminated or truncated:
             break
-
+    print(env._is_solved())
     env.close()
