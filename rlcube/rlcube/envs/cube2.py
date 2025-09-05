@@ -31,32 +31,44 @@ class Cube2(gym.Env):
 
         # Front Clockwise
         if action == 0:
-            # Up becomes right
             new_state[RIGHT, 0, 0] = self.state[UP, 0, 0]
             new_state[RIGHT, 1, 0] = self.state[UP, 1, 0]
-            # Right becomes down
             new_state[DOWN, 0, 1] = self.state[RIGHT, 1, 0]
             new_state[DOWN, 1, 1] = self.state[RIGHT, 0, 0]
-            # Down becomes left
             new_state[LEFT, 0, 1] = self.state[DOWN, 0, 1]
             new_state[LEFT, 1, 1] = self.state[DOWN, 1, 1]
-            # Left becomes up
             new_state[UP, 0, 0] = self.state[LEFT, 1, 1]
             new_state[UP, 1, 0] = self.state[LEFT, 0, 1]
         # Front Counter-Clockwise
         if action == 1:
-            # Up becomes left
             new_state[LEFT, 0, 1] = self.state[UP, 1, 0]
             new_state[LEFT, 1, 1] = self.state[UP, 0, 0]
-            # Left becomes down
             new_state[DOWN, 0, 1] = self.state[LEFT, 0, 1]
             new_state[DOWN, 1, 1] = self.state[LEFT, 1, 1]
-            # Down becomes right
             new_state[RIGHT, 0, 0] = self.state[DOWN, 1, 1]
             new_state[RIGHT, 1, 0] = self.state[DOWN, 0, 1]
-            # Right becomes up
             new_state[UP, 0, 0] = self.state[RIGHT, 0, 0]
             new_state[UP, 1, 0] = self.state[RIGHT, 1, 0]
+        # Right Clockwise
+        if action == 2:
+            new_state[BACK, 0, 0] = self.state[UP, 1, 0]
+            new_state[BACK, 1, 0] = self.state[UP, 1, 1]
+            new_state[DOWN, 1, 0] = self.state[BACK, 0, 0]
+            new_state[DOWN, 1, 1] = self.state[BACK, 1, 0]
+            new_state[FRONT, 0, 1] = self.state[DOWN, 1, 1]
+            new_state[FRONT, 1, 1] = self.state[DOWN, 1, 0]
+            new_state[UP, 1, 0] = self.state[FRONT, 1, 1]
+            new_state[UP, 1, 1] = self.state[FRONT, 0, 1]
+        # Right Counter-Clockwise
+        if action == 3:
+            new_state[FRONT, 0, 1] = self.state[UP, 1, 1]
+            new_state[FRONT, 1, 1] = self.state[UP, 1, 0]
+            new_state[DOWN, 1, 1] = self.state[FRONT, 0, 1]
+            new_state[DOWN, 1, 0] = self.state[FRONT, 1, 1]
+            new_state[BACK, 0, 0] = self.state[DOWN, 1, 0]
+            new_state[BACK, 1, 0] = self.state[DOWN, 1, 1]
+            new_state[UP, 1, 0] = self.state[BACK, 0, 0]
+            new_state[UP, 1, 1] = self.state[BACK, 1, 0]
 
         self.state = new_state
         return self.state, 0, False, False, {}
