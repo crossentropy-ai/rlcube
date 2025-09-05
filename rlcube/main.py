@@ -1,5 +1,7 @@
+from rlcube.cube2 import train
+
 def main():
-    print("Hello from rlcube!")
+    train()
 
 
 if __name__ == "__main__":
