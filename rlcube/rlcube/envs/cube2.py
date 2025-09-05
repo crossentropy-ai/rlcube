@@ -1,3 +1,4 @@
+from random import shuffle
 import gymnasium as gym
 import numpy as np
 
@@ -11,8 +12,8 @@ DOWN = 5
 class Cube2(gym.Env):
     def __init__(self):
         super().__init__()
-        self.action_space = gym.spaces.Discrete(6)
-        self.observation_space = gym.spaces.Box(low=0, high=1, shape=(24, 6))
+        self.action_space = gym.spaces.Discrete(12)
+        self.observation_space = gym.spaces.Box(low=0,high=1,shape=(24, 6),dtype=np.int8)
         self.state = np.zeros((6, 2, 2))
         self.step_count = 0
     
@@ -25,8 +26,11 @@ class Cube2(gym.Env):
         self.state[3] = np.ones((2, 2)) * LEFT 
         self.state[4] = np.ones((2, 2)) * UP
         self.state[5] = np.ones((2, 2)) * DOWN
+        shuffle_steps =self.np_random.integers(0, 20)
+        for i in range(shuffle_steps):
+            self.step(self.action_space.sample())
         self.step_count = 0
-        return self.state, {}
+        return self._get_obs(), {}
     
     def step(self, action):
         self.step_count += 1
@@ -154,7 +158,18 @@ class Cube2(gym.Env):
             new_state[FRONT, 1, 1] = self.state[RIGHT, 1, 1]
 
         self.state = new_state
-        return self.state.copy(), 1 if self._is_solved() else -1, self._is_solved(), self.step_count >= 100, {}
+        return self._get_obs(), 1 if self._is_solved() else -1, self._is_solved(), self.step_count >= 100, {}
+
+    def _get_obs(self):
+        one_hots = []
+        for i in range(6):
+            for j in range(2):
+                for k in range(2):
+                    label = int(self.state[i, j, k])
+                    zeros = np.zeros(6)
+                    zeros[label] = 1
+                    one_hots.append(zeros)
+        return np.array(one_hots)
     
     def _is_solved(self):
         for i in range(6):
