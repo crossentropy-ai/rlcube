@@ -69,6 +69,26 @@ class Cube2(gym.Env):
             new_state[BACK, 1, 0] = self.state[DOWN, 1, 1]
             new_state[UP, 1, 0] = self.state[BACK, 0, 0]
             new_state[UP, 1, 1] = self.state[BACK, 1, 0]
+        # Left Clockwise
+        if action == 4:
+            new_state[FRONT, 0, 0] = self.state[UP, 0, 1]
+            new_state[FRONT, 1, 0] = self.state[UP, 0, 0]
+            new_state[DOWN, 0, 0] = self.state[FRONT, 1, 0]
+            new_state[DOWN, 0, 1] = self.state[FRONT, 0, 0]
+            new_state[BACK, 0, 1] = self.state[DOWN, 0, 0]
+            new_state[BACK, 1, 1] = self.state[DOWN, 0, 1]
+            new_state[UP, 0, 0] = self.state[BACK, 0, 1]
+            new_state[UP, 0, 1] = self.state[BACK, 1, 1]
+        # Left Counter-Clockwise
+        if action == 5:
+            new_state[BACK, 0, 1] = self.state[UP, 0, 0]
+            new_state[BACK, 1, 1] = self.state[UP, 0, 1]
+            new_state[DOWN, 0, 0] = self.state[BACK, 0, 1]
+            new_state[DOWN, 0, 1] = self.state[BACK, 1, 1]
+            new_state[FRONT, 0, 0] = self.state[DOWN, 0, 1]
+            new_state[FRONT, 1, 0] = self.state[DOWN, 0, 0]
+            new_state[UP, 0, 1] = self.state[FRONT, 0, 0]
+            new_state[UP, 0, 0] = self.state[FRONT, 1, 0]
 
         self.state = new_state
         return self.state, 0, False, False, {}
