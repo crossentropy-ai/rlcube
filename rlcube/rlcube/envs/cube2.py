@@ -108,7 +108,27 @@ class Cube2(gym.Env):
             new_state[UP, 1, 1]    = self.state[LEFT, 0, 0]  
             new_state[UP, 0, 1]    = self.state[LEFT, 1, 0]  
             new_state[LEFT, 0, 0]  = self.state[DOWN, 0, 0]  
-            new_state[LEFT, 1, 0]  = self.state[DOWN, 1, 0]  
+            new_state[LEFT, 1, 0]  = self.state[DOWN, 1, 0]
+        # Up Clockwise
+        if action == 8:
+            new_state[FRONT, 0, 0] = self.state[RIGHT, 0, 0]
+            new_state[FRONT, 0, 1] = self.state[RIGHT, 0, 1]
+            new_state[LEFT, 0, 0]  = self.state[FRONT, 0, 0]
+            new_state[LEFT, 0, 1]  = self.state[FRONT, 0, 1]
+            new_state[BACK, 0, 0]  = self.state[LEFT, 0, 0]
+            new_state[BACK, 0, 1]  = self.state[LEFT, 0, 1]
+            new_state[RIGHT, 0, 0] = self.state[BACK, 0, 0]
+            new_state[RIGHT, 0, 1] = self.state[BACK, 0, 1]
+        # Up Counter-Clockwise
+        if action == 9:
+            new_state[RIGHT, 0, 0] = self.state[FRONT, 0, 0]
+            new_state[RIGHT, 0, 1] = self.state[FRONT, 0, 1]
+            new_state[FRONT, 0, 0] = self.state[LEFT, 0, 0] 
+            new_state[FRONT, 0, 1] = self.state[LEFT, 0, 1] 
+            new_state[LEFT, 0, 0]  = self.state[BACK, 0, 0] 
+            new_state[LEFT, 0, 1]  = self.state[BACK, 0, 1] 
+            new_state[BACK, 0, 0]  = self.state[RIGHT, 0, 0]
+            new_state[BACK, 0, 1]  = self.state[RIGHT, 0, 1]
 
         self.state = new_state
         return self.state, 0, False, False, {}
