@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { CubePiece } from "./cube-piece";
 import { RotationPanel } from "./rotation-panel";
+import { FacingDirection } from "./consts";
 
 const CUBE_POSITIONS: Array<[number, number, number]> = [];
 for (let x = -0.5; x <= 0.5; x++) {
@@ -29,15 +30,11 @@ export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
         <Fragment key={face}>
           <RotationPanel
             direction="clockwise"
-            face={
-              face as "front" | "back" | "left" | "right" | "top" | "bottom"
-            }
+            facingDirection={face as FacingDirection}
           />
           <RotationPanel
             direction="counter-clockwise"
-            face={
-              face as "front" | "back" | "left" | "right" | "top" | "bottom"
-            }
+            facingDirection={face as FacingDirection}
           />
         </Fragment>
       ))}

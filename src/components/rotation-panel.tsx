@@ -2,16 +2,21 @@
 
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
+import { Rotations, FacingDirection } from "./consts";
 
 type RotationPanelProps = {
   direction: "clockwise" | "counter-clockwise";
-  face: "front" | "back" | "left" | "right" | "top" | "bottom";
+  facingDirection: FacingDirection;
 };
 
-export const RotationPanel = ({ direction, face }: RotationPanelProps) => {
+export const RotationPanel = ({
+  direction,
+  facingDirection,
+}: RotationPanelProps) => {
   const clockwise = direction === "clockwise";
   const texture = useLoader(TextureLoader, `/textures/${direction}.png`);
-  const position: Record<string, [number, number, number]> = {
+
+  const position: Record<FacingDirection, [number, number, number]> = {
     front: clockwise ? [0.5, 0, 1.01] : [-0.5, 0, 1.01],
     back: clockwise ? [-0.5, 0, -1.01] : [0.5, 0, -1.01],
     left: clockwise ? [-1.01, 0, 0.5] : [-1.01, 0, -0.5],
@@ -19,16 +24,12 @@ export const RotationPanel = ({ direction, face }: RotationPanelProps) => {
     top: clockwise ? [0.5, 1.01, 0] : [-0.5, 1.01, 0],
     bottom: clockwise ? [0.5, -1.01, 0] : [-0.5, -1.01, 0],
   };
-  const rotation: Record<string, [number, number, number]> = {
-    front: [0, 0, 0],
-    back: [0, Math.PI, 0],
-    left: [0, -Math.PI / 2, 0],
-    right: [0, Math.PI / 2, 0],
-    top: [-Math.PI / 2, 0, 0],
-    bottom: [Math.PI / 2, 0, 0],
-  };
+
   return (
-    <mesh position={position[face]} rotation={rotation[face]}>
+    <mesh
+      position={position[facingDirection]}
+      rotation={Rotations[facingDirection]}
+    >
       <planeGeometry args={[0.8, 1.6]} />
       <meshStandardMaterial
         color={"#aaaaaa"}
