@@ -13,7 +13,7 @@ export const Canvas = () => {
 
   return (
     <ThreeCanvas shadows camera={{ position: [0, 0, 4.5], fov: 50 }}>
-      <CubePiece roughness={roughness} />
+      <CubePiece roughness={roughness} position={[0, 0, 1]} />
       <Env />
     </ThreeCanvas>
   );
