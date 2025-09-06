@@ -1,5 +1,4 @@
 import { CubePiece } from "./cube-piece";
-import { FacingDirection } from "./consts";
 import { Rotator } from "./rotator";
 import { CubesProvider } from "@/contexts/cubes-context";
 
@@ -26,9 +25,7 @@ export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
           roughness={roughness}
         />
       ))}
-      {["front", "back", "left", "right", "top", "bottom"].map((face) => (
-        <Rotator key={face} facingDirection={face as FacingDirection} />
-      ))}
+      <Rotator />
     </CubesProvider>
   );
 };
