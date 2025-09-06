@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { CubePiece } from "./cube-piece";
 import { RotationPanel } from "./rotation-panel";
 
@@ -24,14 +25,22 @@ export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
           roughness={roughness}
         />
       ))}
-      <RotationPanel direction="clockwise" face="front" />
-      <RotationPanel direction="counter-clockwise" face="front" />
-      <RotationPanel direction="clockwise" face="back" />
-      <RotationPanel direction="counter-clockwise" face="back" />
-      <RotationPanel direction="clockwise" face="left" />
-      <RotationPanel direction="counter-clockwise" face="left" />
-      <RotationPanel direction="clockwise" face="right" />
-      <RotationPanel direction="counter-clockwise" face="right" />
+      {["front", "back", "left", "right", "top", "bottom"].map((face) => (
+        <Fragment key={face}>
+          <RotationPanel
+            direction="clockwise"
+            face={
+              face as "front" | "back" | "left" | "right" | "top" | "bottom"
+            }
+          />
+          <RotationPanel
+            direction="counter-clockwise"
+            face={
+              face as "front" | "back" | "left" | "right" | "top" | "bottom"
+            }
+          />
+        </Fragment>
+      ))}
     </group>
   );
 };

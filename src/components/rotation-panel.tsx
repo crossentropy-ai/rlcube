@@ -16,12 +16,16 @@ export const RotationPanel = ({ direction, face }: RotationPanelProps) => {
     back: clockwise ? [-0.5, 0, -1.01] : [0.5, 0, -1.01],
     left: clockwise ? [-1.01, 0, 0.5] : [-1.01, 0, -0.5],
     right: clockwise ? [1.01, 0, -0.5] : [1.01, 0, 0.5],
+    top: clockwise ? [0.5, 1.01, 0] : [-0.5, 1.01, 0],
+    bottom: clockwise ? [0.5, -1.01, 0] : [-0.5, -1.01, 0],
   };
   const rotation: Record<string, [number, number, number]> = {
     front: [0, 0, 0],
     back: [0, Math.PI, 0],
     left: [0, -Math.PI / 2, 0],
     right: [0, Math.PI / 2, 0],
+    top: [-Math.PI / 2, 0, 0],
+    bottom: [Math.PI / 2, 0, 0],
   };
   return (
     <mesh position={position[face]} rotation={rotation[face]}>
