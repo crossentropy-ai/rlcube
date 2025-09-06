@@ -4,6 +4,7 @@ import { RotationPanel } from "./rotation-panel";
 import { Group } from "three";
 import { Fragment, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useControls } from "leva";
 
 type RotateArgs = {
   rotatingFaceDirection: FacingDirection;
@@ -11,7 +12,11 @@ type RotateArgs = {
   rotatingGroup: Group;
 };
 
-export const Rotator = () => {
+type RotatorProps = {
+  cubeSpeed: number;
+};
+
+export const Rotator = ({ cubeSpeed }: RotatorProps) => {
   const { getCubes, cubeGroupRef } = useCubesContext();
   const isRotating = useRef(false);
   const rotateArgs = useRef<RotateArgs>({
@@ -26,12 +31,11 @@ export const Rotator = () => {
     const cubeGroup = cubeGroupRef.current;
     if (!isRotating.current || !cubeGroup) return;
 
-    const speed = 2;
     let sign = 0;
     switch (rotatingFaceDirection) {
       case "front":
         sign = rotatingDirection === "clockwise" ? -1 : 1;
-        rotatingGroup.rotation.z += sign * delta * speed;
+        rotatingGroup.rotation.z += sign * delta * cubeSpeed;
         if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
           rotatingGroup.rotation.z = (Math.PI / 2) * sign;
           isRotating.current = false;
@@ -39,7 +43,7 @@ export const Rotator = () => {
         break;
       case "back":
         sign = rotatingDirection === "clockwise" ? 1 : -1;
-        rotatingGroup.rotation.z += sign * delta * speed;
+        rotatingGroup.rotation.z += sign * delta * cubeSpeed;
         if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
           rotatingGroup.rotation.z = (Math.PI / 2) * sign;
           isRotating.current = false;
@@ -47,7 +51,7 @@ export const Rotator = () => {
         break;
       case "left":
         sign = rotatingDirection === "clockwise" ? 1 : -1;
-        rotatingGroup.rotation.x += sign * delta * speed;
+        rotatingGroup.rotation.x += sign * delta * cubeSpeed;
         if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
           rotatingGroup.rotation.x = (Math.PI / 2) * sign;
           isRotating.current = false;
@@ -55,7 +59,7 @@ export const Rotator = () => {
         break;
       case "right":
         sign = rotatingDirection === "clockwise" ? -1 : 1;
-        rotatingGroup.rotation.x += sign * delta * speed;
+        rotatingGroup.rotation.x += sign * delta * cubeSpeed;
         if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
           rotatingGroup.rotation.x = (Math.PI / 2) * sign;
           isRotating.current = false;
@@ -63,7 +67,7 @@ export const Rotator = () => {
         break;
       case "top":
         sign = rotatingDirection === "clockwise" ? -1 : 1;
-        rotatingGroup.rotation.y += sign * delta * speed;
+        rotatingGroup.rotation.y += sign * delta * cubeSpeed;
         if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
           rotatingGroup.rotation.y = (Math.PI / 2) * sign;
           isRotating.current = false;
@@ -71,7 +75,7 @@ export const Rotator = () => {
         break;
       case "bottom":
         sign = rotatingDirection === "clockwise" ? 1 : -1;
-        rotatingGroup.rotation.y += sign * delta * speed;
+        rotatingGroup.rotation.y += sign * delta * cubeSpeed;
         if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
           rotatingGroup.rotation.y = (Math.PI / 2) * sign;
           isRotating.current = false;

@@ -14,10 +14,11 @@ for (let x = -0.5; x <= 0.5; x += 1) {
 }
 
 type RubiksCubeProps = {
-  roughness: number;
+  cubeRoughness: number;
+  cubeSpeed: number;
 };
 
-export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
+export const RubiksCube = ({ cubeRoughness, cubeSpeed }: RubiksCubeProps) => {
   const cubeGroupRef = useRef<Group | null>(null);
   return (
     <CubesProvider cubeGroupRef={cubeGroupRef}>
@@ -26,11 +27,11 @@ export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
           <CubePiece
             key={position.join(",")}
             initialPosition={position}
-            roughness={roughness}
+            roughness={cubeRoughness}
           />
         ))}
       </group>
-      <Rotator />
+      <Rotator cubeSpeed={cubeSpeed} />
     </CubesProvider>
   );
 };

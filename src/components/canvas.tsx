@@ -7,13 +7,14 @@ import { Env } from "../components/env";
 import { RubiksCube } from "./rubiks-cube";
 
 export const Canvas = () => {
-  const { roughness } = useControls({
-    roughness: { value: 0.5, min: 0.2, max: 0.8 },
+  const { cubeRoughness, cubeSpeed } = useControls({
+    cubeRoughness: { value: 0.5, min: 0.2, max: 0.8 },
+    cubeSpeed: { value: 2, min: 1, max: 10 },
   });
 
   return (
     <ThreeCanvas shadows camera={{ position: [0, 0, 4.5], fov: 50 }}>
-      <RubiksCube roughness={roughness} />
+      <RubiksCube cubeRoughness={cubeRoughness} cubeSpeed={cubeSpeed} />
       <Env />
     </ThreeCanvas>
   );
