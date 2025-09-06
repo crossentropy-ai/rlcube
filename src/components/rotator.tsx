@@ -17,7 +17,6 @@ export const Rotator = ({ facingDirection }: RotatorProps) => {
     "clockwise",
   );
   const rotatingGroup = useRef<Group>(new Group());
-  scene.add(rotatingGroup.current);
 
   useFrame((state, delta) => {
     if (!isRotating.current) return;
@@ -76,9 +75,9 @@ export const Rotator = ({ facingDirection }: RotatorProps) => {
     }
 
     if (!isRotating.current) {
-      rotatingGroup.current.children.forEach((child) => {
-        scene.attach(child);
-      });
+      const children = [...rotatingGroup.current.children];
+      children.forEach((child) => scene.attach(child));
+      scene.remove(rotatingGroup.current);
     }
   });
 
@@ -86,9 +85,9 @@ export const Rotator = ({ facingDirection }: RotatorProps) => {
     if (isRotating.current) return;
     const cubes = getCubes(facingDirection);
 
-    cubes.forEach((cube) => {
-      rotatingGroup.current.attach(cube);
-    });
+    rotatingGroup.current = new Group();
+    scene.add(rotatingGroup.current);
+    cubes.forEach((cube) => rotatingGroup.current.attach(cube));
     rotatingDirection.current = direction;
     isRotating.current = true;
   };
