@@ -28,6 +28,8 @@ export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
       <RotationPanel direction="counter-clockwise" face="front" />
       <RotationPanel direction="clockwise" face="back" />
       <RotationPanel direction="counter-clockwise" face="back" />
+      <RotationPanel direction="clockwise" face="left" />
+      <RotationPanel direction="counter-clockwise" face="left" />
       <RotationPanel direction="clockwise" face="right" />
       <RotationPanel direction="counter-clockwise" face="right" />
     </group>

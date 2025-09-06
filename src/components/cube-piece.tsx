@@ -25,8 +25,8 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
   const visibleFaces = {
     front: z > 0,
     back: z < 0,
-    right: x > 0,
     left: x < 0,
+    right: x > 0,
     top: y > 0,
     bottom: y < 0,
   };
@@ -57,13 +57,13 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
             stickerPosition = [0, 0, -0.48];
             stickerRotation = [0, Math.PI, 0];
             break;
-          case "right":
-            stickerPosition = [0.48, 0, 0];
-            stickerRotation = [0, Math.PI / 2, 0];
-            break;
           case "left":
             stickerPosition = [-0.48, 0, 0];
             stickerRotation = [0, -Math.PI / 2, 0];
+            break;
+          case "right":
+            stickerPosition = [0.48, 0, 0];
+            stickerRotation = [0, Math.PI / 2, 0];
             break;
           case "top":
             stickerPosition = [0, 0.48, 0];
