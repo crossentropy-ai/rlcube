@@ -26,8 +26,8 @@ export const Env = () => {
         enableZoom={true}
         minDistance={4}
         maxDistance={10}
-        minPolarAngle={Math.PI / 2.1}
-        maxPolarAngle={Math.PI / 2.1}
+        minPolarAngle={-Math.PI}
+        maxPolarAngle={Math.PI}
       />
       <Environment preset={preset} background blur={1} />
     </>
