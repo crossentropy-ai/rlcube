@@ -4,7 +4,6 @@ import { RotationPanel } from "./rotation-panel";
 import { Group } from "three";
 import { Fragment, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useControls } from "leva";
 
 type RotateArgs = {
   rotatingFaceDirection: FacingDirection;

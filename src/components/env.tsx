@@ -1,38 +1,47 @@
 "ue client";
 
 import { useState, useTransition } from "react";
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Environment, CameraControls } from "@react-three/drei";
 import { PresetsType } from "@react-three/drei/helpers/environment-assets";
 import { useControls } from "leva";
+import { CameraControlsImpl } from "@react-three/drei";
+const { ACTION } = CameraControlsImpl;
 
 export const Env = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, startTransition] = useTransition();
 
-  const [preset, setPreset] = useState<PresetsType>("sunset");
-  const { autoRotate } = useControls({
-    autoRotate: {
-      value: false,
-    },
-    preset: {
-      value: preset,
+  const [background, setBackground] = useState<PresetsType>("sunset");
+  useControls({
+    background: {
+      value: background,
       options: ["sunset", "dawn", "forest"],
-      onChange: (value) => startTransition(() => setPreset(value)),
+      onChange: (value) => startTransition(() => setBackground(value)),
     },
   });
   return (
     <>
-      <OrbitControls
-        autoRotate={autoRotate}
-        autoRotateSpeed={0.5}
-        enablePan={false}
-        enableZoom={true}
-        minDistance={4}
+      <CameraControls
+        makeDefault
+        polarAngle={0.8}
+        azimuthAngle={0.8}
+        maxPolarAngle={Math.PI / 1.2}
+        minPolarAngle={-Math.PI / 1.2}
         maxDistance={10}
-        minPolarAngle={-Math.PI}
-        maxPolarAngle={Math.PI}
+        minDistance={4}
+        mouseButtons={{
+          left: ACTION.ROTATE,
+          middle: ACTION.DOLLY,
+          right: ACTION.ROTATE,
+          wheel: ACTION.DOLLY,
+        }}
+        touches={{
+          one: ACTION.TOUCH_ROTATE,
+          two: ACTION.TOUCH_DOLLY,
+          three: ACTION.TOUCH_DOLLY,
+        }}
       />
-      <Environment preset={preset} background blur={1} />
+      <Environment preset={background} background blur={1} />
     </>
   );
 };
