@@ -1,4 +1,7 @@
+"use client";
+
 import { RoundedBox } from "@react-three/drei";
+import { useState } from "react";
 
 // Standard Rubik's cube colors
 const CUBE_COLORS = {
@@ -12,11 +15,21 @@ const CUBE_COLORS = {
 
 type CubePieceProps = {
   roughness: number;
-  position: [number, number, number];
+  initialPosition: [number, number, number];
 };
 
-export const CubePiece = ({ roughness, position }: CubePieceProps) => {
-  const [x, y, z] = position;
+export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
+  const [x, y, z] = initialPosition;
+  const [position] = useState<[number, number, number]>([x, y, z]);
+
+  const visibleFaces = {
+    front: z > 0,
+    back: z < 0,
+    right: x > 0,
+    left: x < 0,
+    top: y > 0,
+    bottom: y < 0,
+  };
 
   return (
     <mesh position={position}>
@@ -28,7 +41,9 @@ export const CubePiece = ({ roughness, position }: CubePieceProps) => {
         />
       </RoundedBox>
 
-      {Object.keys(CUBE_COLORS).map((face) => {
+      {Object.entries(visibleFaces).map(([face, isVisible]) => {
+        if (!isVisible) return null;
+
         const color = CUBE_COLORS[face as keyof typeof CUBE_COLORS];
         let stickerPosition: [number, number, number] = [0, 0, 0];
         let stickerRotation: [number, number, number] = [0, 0, 0];

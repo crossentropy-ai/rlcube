@@ -19,7 +19,7 @@ export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
       {CUBE_POSITIONS.map((position) => (
         <CubePiece
           key={position.join(",")}
-          position={position}
+          initialPosition={position}
           roughness={roughness}
         />
       ))}
