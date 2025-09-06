@@ -2,23 +2,31 @@
 
 import { FacingDirection } from "@/components/consts";
 import { createContext, RefObject, useContext, useRef } from "react";
-import { Mesh } from "three";
+import { Group, Mesh } from "three";
 
 export type CubeMeshRef = RefObject<Mesh | null>;
 
 type CubesContextType = {
+  cubeGroupRef: RefObject<Group | null>;
   addCube: (cubeMeshRef: CubeMeshRef) => void;
   getCubes: (faceDirection: FacingDirection) => Mesh[];
 };
 
 const CubesContext = createContext<CubesContextType>({
+  cubeGroupRef: { current: null },
   addCube: () => {},
   getCubes: () => [],
 });
 
 export const useCubesContext = () => useContext(CubesContext);
 
-export const CubesProvider = ({ children }: { children: React.ReactNode }) => {
+export const CubesProvider = ({
+  cubeGroupRef,
+  children,
+}: {
+  cubeGroupRef: RefObject<Group | null>;
+  children: React.ReactNode;
+}) => {
   const cubes = useRef<CubeMeshRef[]>([]);
 
   const addCube = (cubeMeshRef: CubeMeshRef) => {
@@ -48,7 +56,7 @@ export const CubesProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <CubesContext.Provider value={{ addCube, getCubes }}>
+    <CubesContext.Provider value={{ cubeGroupRef, addCube, getCubes }}>
       {children}
     </CubesContext.Provider>
   );

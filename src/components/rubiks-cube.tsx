@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import { CubePiece } from "./cube-piece";
 import { Rotator } from "./rotator";
 import { CubesProvider } from "@/contexts/cubes-context";
+import { Group } from "three";
 
 const CUBE_POSITIONS: Array<[number, number, number]> = [];
 for (let x = -0.5; x <= 0.5; x += 1) {
@@ -16,15 +18,18 @@ type RubiksCubeProps = {
 };
 
 export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
+  const cubeGroupRef = useRef<Group | null>(null);
   return (
-    <CubesProvider>
-      {CUBE_POSITIONS.map((position) => (
-        <CubePiece
-          key={position.join(",")}
-          initialPosition={position}
-          roughness={roughness}
-        />
-      ))}
+    <CubesProvider cubeGroupRef={cubeGroupRef}>
+      <group ref={cubeGroupRef}>
+        {CUBE_POSITIONS.map((position) => (
+          <CubePiece
+            key={position.join(",")}
+            initialPosition={position}
+            roughness={roughness}
+          />
+        ))}
+      </group>
       <Rotator />
     </CubesProvider>
   );

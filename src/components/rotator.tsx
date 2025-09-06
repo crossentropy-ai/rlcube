@@ -3,7 +3,7 @@ import { FacingDirection } from "./consts";
 import { RotationPanel } from "./rotation-panel";
 import { Group } from "three";
 import { Fragment, useRef } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 
 type RotateArgs = {
   rotatingFaceDirection: FacingDirection;
@@ -12,8 +12,7 @@ type RotateArgs = {
 };
 
 export const Rotator = () => {
-  const { scene } = useThree();
-  const { getCubes } = useCubesContext();
+  const { getCubes, cubeGroupRef } = useCubesContext();
   const isRotating = useRef(false);
   const rotateArgs = useRef<RotateArgs>({
     rotatingFaceDirection: "front",
@@ -24,7 +23,8 @@ export const Rotator = () => {
   useFrame((state, delta) => {
     const { rotatingFaceDirection, rotatingDirection, rotatingGroup } =
       rotateArgs.current;
-    if (!isRotating.current) return;
+    const cubeGroup = cubeGroupRef.current;
+    if (!isRotating.current || !cubeGroup) return;
 
     const speed = 2;
     let sign = 0;
@@ -81,21 +81,21 @@ export const Rotator = () => {
 
     if (isRotating.current) return;
     const children = [...rotatingGroup.children];
-    children.forEach((child) => scene.attach(child));
-    scene.remove(rotatingGroup);
+    children.forEach((child) => cubeGroup.attach(child));
+    cubeGroup.remove(rotatingGroup);
   });
 
   const handleClick = (
     facingDirection: FacingDirection,
     direction: "clockwise" | "counter-clockwise",
   ) => {
-    if (isRotating.current) return;
+    if (isRotating.current || !cubeGroupRef.current) return;
     const cubes = getCubes(facingDirection);
 
     rotateArgs.current.rotatingFaceDirection = facingDirection;
     rotateArgs.current.rotatingDirection = direction;
     rotateArgs.current.rotatingGroup = new Group();
-    scene.add(rotateArgs.current.rotatingGroup);
+    cubeGroupRef.current.add(rotateArgs.current.rotatingGroup);
     cubes.forEach((cube) => rotateArgs.current.rotatingGroup.attach(cube));
 
     isRotating.current = true;
