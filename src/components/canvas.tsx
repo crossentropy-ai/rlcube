@@ -4,16 +4,16 @@ import { useControls } from "leva";
 import { Canvas as ThreeCanvas } from "@react-three/fiber";
 
 import { Env } from "../components/env";
-import { CubePiece } from "@/components/cube-piece";
+import { RubiksCube } from "./rubiks-cube";
 
 export const Canvas = () => {
   const { roughness } = useControls({
-    roughness: { value: 1, min: 0, max: 1 },
+    roughness: { value: 0.5, min: 0.2, max: 0.8 },
   });
 
   return (
     <ThreeCanvas shadows camera={{ position: [0, 0, 4.5], fov: 50 }}>
-      <CubePiece roughness={roughness} position={[0, 0, 1]} />
+      <RubiksCube roughness={roughness} />
       <Env />
     </ThreeCanvas>
   );
