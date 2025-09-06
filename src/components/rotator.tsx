@@ -33,7 +33,7 @@ export const Rotator = ({ facingDirection }: RotatorProps) => {
         }
         break;
       case "back":
-        sign = rotatingDirection.current === "clockwise" ? 1 : 1;
+        sign = rotatingDirection.current === "clockwise" ? 1 : -1;
         rotatingGroup.current.rotation.z += sign * delta * speed;
         if (Math.abs(rotatingGroup.current.rotation.z) > Math.PI / 2) {
           isRotating.current = false;
