@@ -1,8 +1,10 @@
 "use client";
 
 import { RoundedBox } from "@react-three/drei";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FacingDirection, Rotations } from "./consts";
+import { Mesh } from "three";
+import { useCubesContext } from "@/contexts/cubes-context";
 
 // Standard Rubik's cube colors
 const CUBE_COLORS = {
@@ -23,6 +25,10 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
   const [x, y, z] = initialPosition;
   const [position] = useState<[number, number, number]>([x, y, z]);
 
+  const meshRef = useRef<Mesh | null>(null);
+  const { addCube } = useCubesContext();
+  addCube(meshRef);
+
   const visibleFaces: Record<FacingDirection, boolean> = {
     front: z > 0,
     back: z < 0,
@@ -41,7 +47,7 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
   };
 
   return (
-    <mesh position={position}>
+    <mesh position={position} ref={meshRef}>
       <RoundedBox args={[0.95, 0.95, 0.95]} radius={0.05} smoothness={4}>
         <meshStandardMaterial
           color="#2a2a2a"
