@@ -10,7 +10,10 @@ export const Env = () => {
   const [_, startTransition] = useTransition();
 
   const [preset, setPreset] = useState<PresetsType>("sunset");
-  useControls({
+  const { autoRotate } = useControls({
+    autoRotate: {
+      value: true,
+    },
     preset: {
       value: preset,
       options: ["sunset", "dawn", "forest"],
@@ -20,7 +23,7 @@ export const Env = () => {
   return (
     <>
       <OrbitControls
-        autoRotate
+        autoRotate={autoRotate}
         autoRotateSpeed={0.5}
         enablePan={false}
         enableZoom={true}

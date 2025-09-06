@@ -18,15 +18,6 @@ type CubePieceProps = {
 export const CubePiece = ({ roughness, position }: CubePieceProps) => {
   const [x, y, z] = position;
 
-  const visibleFaces: Record<keyof typeof CUBE_COLORS, boolean> = {
-    front: z > 0, // Front face (positive z)
-    back: z < 0, // Back face (negative z)
-    right: x > 0, // Right face (positive x)
-    left: x < 0, // Left face (negative x)
-    top: y > 0, // Top face (positive y)
-    bottom: y < 0, // Bottom face (negative y)
-  };
-
   return (
     <mesh position={position}>
       <RoundedBox args={[0.95, 0.95, 0.95]} radius={0.05} smoothness={4}>
@@ -37,8 +28,7 @@ export const CubePiece = ({ roughness, position }: CubePieceProps) => {
         />
       </RoundedBox>
 
-      {Object.entries(visibleFaces).map(([face, isVisible]) => {
-        if (!isVisible) return null;
+      {Object.keys(CUBE_COLORS).map((face) => {
         const color = CUBE_COLORS[face as keyof typeof CUBE_COLORS];
         let stickerPosition: [number, number, number] = [0, 0, 0];
         let stickerRotation: [number, number, number] = [0, 0, 0];
@@ -46,6 +36,7 @@ export const CubePiece = ({ roughness, position }: CubePieceProps) => {
         switch (face) {
           case "front":
             stickerPosition = [0, 0, 0.48];
+            stickerRotation = [0, 0, 0];
             break;
           case "back":
             stickerPosition = [0, 0, -0.48];
