@@ -1,4 +1,5 @@
 import { CubePiece } from "./cube-piece";
+import { RotationPanel } from "./rotation-panel";
 
 const CUBE_POSITIONS: Array<[number, number, number]> = [];
 for (let x = -0.5; x <= 0.5; x++) {
@@ -23,6 +24,10 @@ export const RubiksCube = ({ roughness }: RubiksCubeProps) => {
           roughness={roughness}
         />
       ))}
+      <RotationPanel direction="clockwise" face="front" />
+      <RotationPanel direction="counter-clockwise" face="front" />
+      <RotationPanel direction="clockwise" face="back" />
+      <RotationPanel direction="counter-clockwise" face="back" />
     </group>
   );
 };

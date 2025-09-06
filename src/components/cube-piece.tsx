@@ -5,11 +5,11 @@ import { useState } from "react";
 
 // Standard Rubik's cube colors
 const CUBE_COLORS = {
-  front: "#ff4444", // Red
-  back: "#ff8800", // Orange
-  left: "#44ff44", // Green
-  right: "#4444ff", // Blue
-  top: "#ffff44", // Yellow
+  front: "#ff0000", // Red
+  back: "#ff00ff", // Purple
+  left: "#00ff00", // Green
+  right: "#0000ff", // Blue
+  top: "#ffff00", // Yellow
   bottom: "#ffffff", // White
 };
 

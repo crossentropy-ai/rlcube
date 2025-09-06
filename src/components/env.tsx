@@ -12,7 +12,7 @@ export const Env = () => {
   const [preset, setPreset] = useState<PresetsType>("sunset");
   const { autoRotate } = useControls({
     autoRotate: {
-      value: true,
+      value: false,
     },
     preset: {
       value: preset,
