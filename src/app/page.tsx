@@ -10,12 +10,11 @@ export default function Home() {
             with Reinforcement Learning
           </div>
           <div className="text-gray-700">
-            <a href="https://cross-entropy.ai">
-              https://cross-entropy.ai
-            </a>
+            <a href="https://cross-entropy.ai">https://cross-entropy.ai</a>
           </div>
         </div>
       </div>
+
       <Canvas />
     </div>
   );
