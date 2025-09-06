@@ -12,7 +12,7 @@ export const Rotator = ({ facingDirection }: RotatorProps) => {
   const handleClick = (direction: "clockwise" | "counter-clockwise") => {
     const cubes = getCubes(facingDirection);
     cubes.forEach((cube) => {
-      console.log(cube.position);
+      console.log(cube);
     });
     console.log(cubes.length, direction);
   };

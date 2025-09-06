@@ -22,7 +22,9 @@ export const CubesProvider = ({ children }: { children: React.ReactNode }) => {
   const cubes = useRef<CubeMeshRef[]>([]);
 
   const addCube = (cubeMeshRef: CubeMeshRef) => {
-    cubes.current.push(cubeMeshRef);
+    if (!cubes.current.includes(cubeMeshRef)) {
+      cubes.current.push(cubeMeshRef);
+    }
   };
 
   const getCubes = (faceDirection: FacingDirection) => {
