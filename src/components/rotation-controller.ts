@@ -58,7 +58,7 @@ export class RotationController {
     return false;
   }
 
-  private getCubeFaceColorIndex(mesh: Mesh, faceDirection: FacingDirection) {
+  private getCubeFaceData(mesh: Mesh, faceDirection: FacingDirection) {
     const faces = mesh.children.filter((child) => child.userData.isFace);
     let axis: 'x' | 'y' | 'z' = 'x';
     switch (faceDirection) {
@@ -86,8 +86,16 @@ export class RotationController {
         maxFace = face as Mesh;
       }
     }
-    if (!maxFace) return -1; // this should never happen
-    return maxFace.userData.faceColorIndex as number;
+    if (!maxFace) return { colorIndex: -1, worldPosition: new Vector3(), rank: Infinity }; // this should never happen
+    const worldPosition = new Vector3();
+    maxFace.getWorldPosition(worldPosition);
+    const axis2 = ['x', 'y', 'z'].filter((x) => x !== axis) as Array<'x' | 'y' | 'z'>;
+    const rank = worldPosition[axis2[0]] * 100 + worldPosition[axis2[1]] * 10;
+    return {
+      colorIndex: maxFace.userData.faceColorIndex,
+      worldPosition: worldPosition,
+      rank: rank,
+    };
   }
 
   static getInstance() {
@@ -138,8 +146,8 @@ export class RotationController {
     return ['front', 'back', 'right', 'left', 'top', 'bottom'].map((f) => {
       const faceDirection = f as FacingDirection;
       const cubes = this.getCubes(faceDirection);
-      const indices = cubes.map((cube) => this.getCubeFaceColorIndex(cube, faceDirection));
-      return indices;
+      const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
+      return indices.map((i) => i.colorIndex);
     });
   }
 
