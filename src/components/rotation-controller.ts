@@ -1,4 +1,4 @@
-import { Group, Mesh } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 
 import { FacingDirection, RotationStep } from './consts';
 
@@ -58,6 +58,38 @@ export class RotationController {
     return false;
   }
 
+  private getCubeFace(mesh: Mesh, faceDirection: FacingDirection) {
+    const faces = mesh.children.filter((child) => child.userData.isFace);
+    let axis: 'x' | 'y' | 'z' = 'x';
+    switch (faceDirection) {
+      case 'front':
+      case 'back':
+        axis = 'z';
+        break;
+      case 'right':
+      case 'left':
+        axis = 'x';
+        break;
+      case 'top':
+      case 'bottom':
+        axis = 'y';
+        break;
+    }
+    let maxFace: Mesh | null = null;
+    let maxValue = -Infinity;
+    for (const face of faces) {
+      const worldPosition = new Vector3();
+      face.getWorldPosition(worldPosition);
+      const axisValue = Math.abs(worldPosition[axis]);
+      if (axisValue > maxValue) {
+        maxValue = axisValue;
+        maxFace = face as Mesh;
+      }
+    }
+    if (!maxFace) return null;
+    return maxFace;
+  }
+
   static getInstance() {
     if (!RotationController.instance) {
       RotationController.instance = new RotationController();
@@ -100,6 +132,11 @@ export class RotationController {
       case 'bottom':
         return this.cubes.filter((m) => m.position.y < 0);
     }
+  }
+
+  getFaces(faceDirection: FacingDirection) {
+    const cubes = this.getCubes(faceDirection);
+    return cubes.map((cube) => this.getCubeFace(cube, faceDirection));
   }
 
   setCubeSpeed(cubeSpeed: number) {

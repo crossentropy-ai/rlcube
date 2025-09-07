@@ -4,18 +4,8 @@ import { RoundedBox } from '@react-three/drei';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Mesh } from 'three';
 
-import { FacingDirection, Rotations } from './consts';
+import { CubeColors, FacingDirection, Rotations } from './consts';
 import { rotationController } from './rotation-controller';
-
-// Standard Rubik's cube colors
-const CUBE_COLORS = {
-  front: '#ff0000', // Red
-  back: '#ff00ff', // Purple
-  left: '#00ff00', // Green
-  right: '#0000ff', // Blue
-  top: '#ffff00', // Yellow
-  bottom: '#ffffff', // White
-};
 
 export type CubePieceRef = {
   resetPosition: () => void;
@@ -54,8 +44,8 @@ export const CubePiece = forwardRef<CubePieceRef, CubePieceProps>(({ roughness, 
   const positions: Record<FacingDirection, [number, number, number]> = {
     front: [0, 0, 0.48],
     back: [0, 0, -0.48],
-    left: [-0.48, 0, 0],
     right: [0.48, 0, 0],
+    left: [-0.48, 0, 0],
     top: [0, 0.48, 0],
     bottom: [0, -0.48, 0],
   };
@@ -68,9 +58,18 @@ export const CubePiece = forwardRef<CubePieceRef, CubePieceProps>(({ roughness, 
 
       {Object.entries(visibleFaces).map(([face, isVisible]) => {
         if (!isVisible) return null;
-        const color = CUBE_COLORS[face as keyof typeof CUBE_COLORS];
+        const color = CubeColors[face as keyof typeof CubeColors];
         return (
-          <mesh key={face} position={positions[face as FacingDirection]} rotation={Rotations[face as FacingDirection]}>
+          <mesh
+            key={face}
+            position={positions[face as FacingDirection]}
+            rotation={Rotations[face as FacingDirection]}
+            userData={{
+              isFace: true,
+              faceDirection: face,
+              faceColor: color,
+            }}
+          >
             <planeGeometry args={[0.8, 0.8]} />
             <meshStandardMaterial color={color} metalness={1} roughness={roughness} />
           </mesh>

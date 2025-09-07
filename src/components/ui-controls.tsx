@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useControlContext } from '@/contexts/control-context';
 
 import { Actions } from './consts';
+import { rotationController } from './rotation-controller';
 
 export const UIControls = () => {
   const [isControlsOpen, setIsControlsOpen] = useState(true);
@@ -30,7 +31,8 @@ export const UIControls = () => {
   };
 
   const showState = () => {
-    alert('Working on it!');
+    const faces = rotationController.getFaces('front');
+    console.log(faces);
   };
 
   const solve = () => {
