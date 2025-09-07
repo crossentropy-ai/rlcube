@@ -15,6 +15,18 @@ export const UIControls = () => {
     rubiksCubeRef?.current?.rotate(scrambleSteps);
   };
 
+  const reset = () => {
+    alert('Working on it!');
+  };
+
+  const solve = () => {
+    alert('Working on it!');
+  };
+
+  const train = () => {
+    alert('Working on it!');
+  };
+
   return (
     <div className="z-10 pointer-events-none">
       <Card className="max-w-sm bg-white/30 border border-white/80 backdrop-blur-xl pointer-events-auto">
@@ -51,12 +63,14 @@ export const UIControls = () => {
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
               <Button onPress={scramble}>Scramble</Button>
-              <Button>Reset</Button>
-              <Button className="ms-auto" color="success">
+              <Button onPress={reset}>Reset</Button>
+              <Button className="ms-auto" color="success" onPress={solve}>
                 Solve
               </Button>
             </div>
-            <div className="text-sm italic font-bold underline text-primary cursor-pointer">Train my own model!</div>
+            <div className="text-sm italic font-bold underline text-primary cursor-pointer" onClick={train}>
+              Train my own model!
+            </div>
           </div>
         </CardBody>
       </Card>
