@@ -1,6 +1,9 @@
 'use client';
 
-import { Button, ButtonGroup, Card, CardBody, Checkbox, Slider } from '@heroui/react';
+import { Button, ButtonGroup } from '@heroui/button';
+import { Card, CardBody } from '@heroui/card';
+import { Checkbox } from '@heroui/checkbox';
+import { Slider } from '@heroui/slider';
 import { useRef, useState } from 'react';
 
 import { useControlContext } from '@/contexts/control-context';
