@@ -1,9 +1,9 @@
-import { useRef, forwardRef, useImperativeHandle } from "react";
+import { useRef, forwardRef, useImperativeHandle, useEffect } from "react";
 import { CubePiece } from "./cube-piece";
 import { Rotator, RotatorRef } from "./rotator";
-import { CubesProvider } from "@/contexts/cubes-context";
 import { Group } from "three";
 import { RotationStep } from "./consts";
+import { rotationController } from "./rotation-controller";
 
 const CUBE_POSITIONS: Array<[number, number, number]> = [];
 for (let x = -0.5; x <= 0.5; x += 1) {
@@ -32,8 +32,13 @@ export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(
       rotate: (steps: Array<RotationStep>) => rotatorRef.current?.rotate(steps),
     }));
 
+    useEffect(() => {
+      if (cubeGroupRef.current)
+        rotationController.setCubeGroup(cubeGroupRef.current);
+    }, [cubeGroupRef]);
+
     return (
-      <CubesProvider cubeGroupRef={cubeGroupRef}>
+      <>
         <group ref={cubeGroupRef}>
           {CUBE_POSITIONS.map((position) => (
             <CubePiece
@@ -44,7 +49,7 @@ export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(
           ))}
         </group>
         <Rotator ref={rotatorRef} cubeSpeed={cubeSpeed} />
-      </CubesProvider>
+      </>
     );
   },
 );
