@@ -1,14 +1,16 @@
 'use client';
 
 import { Button, ButtonGroup, Card, CardBody, Checkbox, Slider } from '@heroui/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useControlContext } from '@/contexts/control-context';
 
 import { Actions } from './consts';
 import { rotationController } from './rotation-controller';
+import { StateModal, StateModalRef } from './state-modal';
 
 export const UIControls = () => {
+  const stateModalRef = useRef<StateModalRef | null>(null);
   const [isControlsOpen, setIsControlsOpen] = useState(true);
   const {
     rubiksCubeRef,
@@ -31,8 +33,8 @@ export const UIControls = () => {
   };
 
   const showState = () => {
-    const faces = rotationController.getFaces('front');
-    console.log(faces);
+    const status = rotationController.getStatus();
+    stateModalRef.current?.open(status);
   };
 
   const solve = () => {
@@ -115,6 +117,8 @@ export const UIControls = () => {
           </div>
         </CardBody>
       </Card>
+
+      <StateModal ref={stateModalRef} />
     </div>
   );
 };

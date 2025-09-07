@@ -4,7 +4,7 @@ import { RoundedBox } from '@react-three/drei';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Mesh } from 'three';
 
-import { CubeColors, FacingDirection, Rotations } from './consts';
+import { CubeColorIndices, CubeColors, FacingDirection, Rotations } from './consts';
 import { rotationController } from './rotation-controller';
 
 export type CubePieceRef = {
@@ -66,8 +66,8 @@ export const CubePiece = forwardRef<CubePieceRef, CubePieceProps>(({ roughness, 
             rotation={Rotations[face as FacingDirection]}
             userData={{
               isFace: true,
-              faceDirection: face,
               faceColor: color,
+              faceColorIndex: CubeColorIndices[face as FacingDirection],
             }}
           >
             <planeGeometry args={[0.8, 0.8]} />

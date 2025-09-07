@@ -11,6 +11,15 @@ export const CubeColors: Record<FacingDirection, string> = {
   bottom: '#ffffff', // White
 };
 
+export const CubeColorIndices: Record<FacingDirection, number> = {
+  front: 0,
+  back: 1,
+  right: 2,
+  left: 3,
+  top: 4,
+  bottom: 5,
+};
+
 export const Rotations: Record<FacingDirection, [number, number, number]> = {
   front: [0, 0, 0],
   back: [0, Math.PI, 0],
