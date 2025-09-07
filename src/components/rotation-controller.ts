@@ -65,6 +65,16 @@ export class RotationController {
     return RotationController.instance;
   }
 
+  stopRotation(cb: () => void) {
+    this.rotationSteps = [];
+    const cancel = setInterval(() => {
+      if (!this.rotatingStep) {
+        clearInterval(cancel);
+        cb();
+      }
+    }, 50);
+  }
+
   setCubeGroup(cubeGroup: Group) {
     this.cubeGroup = cubeGroup;
   }

@@ -16,7 +16,7 @@ export const UIControls = () => {
   };
 
   const reset = () => {
-    alert('Working on it!');
+    rubiksCubeRef?.current?.reset();
   };
 
   const solve = () => {

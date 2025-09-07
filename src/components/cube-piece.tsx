@@ -1,7 +1,7 @@
 'use client';
 
 import { RoundedBox } from '@react-three/drei';
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Mesh } from 'three';
 
 import { FacingDirection, Rotations } from './consts';
@@ -17,14 +17,17 @@ const CUBE_COLORS = {
   bottom: '#ffffff', // White
 };
 
+export type CubePieceRef = {
+  resetPosition: () => void;
+};
+
 type CubePieceProps = {
   roughness: number;
   initialPosition: [number, number, number];
 };
 
-export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
+export const CubePiece = forwardRef<CubePieceRef, CubePieceProps>(({ roughness, initialPosition }, ref) => {
   const [x, y, z] = initialPosition;
-  const [position] = useState<[number, number, number]>([x, y, z]);
 
   const meshRef = useRef<Mesh | null>(null);
   useEffect(() => {
@@ -32,6 +35,13 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
       rotationController.addCube(meshRef.current);
     }
   }, [meshRef]);
+
+  useImperativeHandle(ref, () => ({
+    resetPosition: () => {
+      meshRef.current?.position.set(x, y, z);
+      meshRef.current?.rotation.set(0, 0, 0);
+    },
+  }));
 
   const visibleFaces: Record<FacingDirection, boolean> = {
     front: z > 0,
@@ -51,7 +61,7 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
   };
 
   return (
-    <mesh position={position} ref={meshRef}>
+    <mesh position={[x, y, z]} ref={meshRef}>
       <RoundedBox args={[0.95, 0.95, 0.95]} radius={0.05} smoothness={4}>
         <meshStandardMaterial color="#2a2a2a" metalness={1} roughness={roughness} />
       </RoundedBox>
@@ -68,4 +78,6 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
       })}
     </mesh>
   );
-};
+});
+
+CubePiece.displayName = 'CubePiece';

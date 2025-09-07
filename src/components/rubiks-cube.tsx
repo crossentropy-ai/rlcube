@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Group } from 'three';
 
 import { RotationStep } from './consts';
-import { CubePiece } from './cube-piece';
+import { CubePiece, CubePieceRef } from './cube-piece';
 import { rotationController } from './rotation-controller';
 import { Rotator, RotatorRef } from './rotator';
 
@@ -17,6 +17,7 @@ for (let x = -0.5; x <= 0.5; x += 1) {
 
 export type RubiksCubeRef = {
   rotate: (steps: Array<RotationStep>) => void;
+  reset: () => void;
 };
 
 type RubiksCubeProps = {
@@ -27,9 +28,17 @@ type RubiksCubeProps = {
 export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(({ cubeRoughness, cubeSpeed }, ref) => {
   const cubeGroupRef = useRef<Group | null>(null);
   const rotatorRef = useRef<RotatorRef | null>(null);
+  const cubePieceRefs = useRef<Map<string, CubePieceRef>>(new Map());
 
   useImperativeHandle(ref, () => ({
     rotate: (steps: Array<RotationStep>) => rotatorRef.current?.rotate(steps),
+    reset: () => {
+      rotationController.stopRotation(() => {
+        cubePieceRefs.current.forEach((cubePieceRef) => {
+          cubePieceRef.resetPosition();
+        });
+      });
+    },
   }));
 
   useEffect(() => {
@@ -39,9 +48,23 @@ export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(({ cubeRoug
   return (
     <>
       <group ref={cubeGroupRef}>
-        {CUBE_POSITIONS.map((position) => (
-          <CubePiece key={position.join(',')} initialPosition={position} roughness={cubeRoughness} />
-        ))}
+        {CUBE_POSITIONS.map((position) => {
+          const positionKey = position.join(',');
+          return (
+            <CubePiece
+              key={positionKey}
+              ref={(ref) => {
+                if (ref) {
+                  cubePieceRefs.current.set(positionKey, ref);
+                } else {
+                  cubePieceRefs.current.delete(positionKey);
+                }
+              }}
+              initialPosition={position}
+              roughness={cubeRoughness}
+            />
+          );
+        })}
       </group>
       <Rotator ref={rotatorRef} cubeSpeed={cubeSpeed} />
     </>
