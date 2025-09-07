@@ -1,3 +1,5 @@
+'use client';
+
 import { UIControls } from './ui-controls';
 import { UITitle } from './ui-title';
 

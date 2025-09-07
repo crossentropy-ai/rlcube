@@ -2,7 +2,19 @@
 
 import { Button, ButtonGroup, Card, CardBody, Slider } from '@heroui/react';
 
+import { useControlContext } from '@/contexts/control-context';
+
+import { Actions } from './consts';
+
 export const UIControls = () => {
+  const { rubiksCubeRef, setBackground, cubeRoughness, setCubeRoughness, cubeSpeed, setCubeSpeed } =
+    useControlContext();
+
+  const scramble = () => {
+    const scrambleSteps = Array.from({ length: 20 }, () => Actions[Math.floor(Math.random() * Actions.length)]);
+    rubiksCubeRef?.current?.rotate(scrambleSteps);
+  };
+
   return (
     <div className="z-10 pointer-events-none">
       <Card className="max-w-sm bg-white/30 border border-white/80 backdrop-blur-xl pointer-events-auto">
@@ -12,17 +24,33 @@ export const UIControls = () => {
             <div className="flex items-center justify-between">
               <div className="text-sm">Background</div>
               <ButtonGroup size="sm">
-                <Button>Sunset</Button>
-                <Button>Dawn</Button>
-                <Button>Forest</Button>
+                <Button onPress={() => setBackground('sunset')}>Sunset</Button>
+                <Button onPress={() => setBackground('dawn')}>Dawn</Button>
+                <Button onPress={() => setBackground('forest')}>Forest</Button>
               </ButtonGroup>
             </div>
-            <Slider size="sm" label="Cube Roughness" defaultValue={0.5} minValue={0} maxValue={1} step={0.1} />
-            <Slider size="sm" label="Cube Speed" defaultValue={2} minValue={1} maxValue={10} step={1} />
+            <Slider
+              size="sm"
+              label="Cube Roughness"
+              value={cubeRoughness}
+              onChange={(value) => setCubeRoughness(value as number)}
+              minValue={0.2}
+              maxValue={1}
+              step={0.01}
+            />
+            <Slider
+              size="sm"
+              label="Cube Speed"
+              value={cubeSpeed}
+              onChange={(value) => setCubeSpeed(value as number)}
+              minValue={1}
+              maxValue={10}
+              step={1}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
-              <Button>Scramble</Button>
+              <Button onPress={scramble}>Scramble</Button>
               <Button>Reset</Button>
               <Button className="ms-auto" color="success">
                 Solve
