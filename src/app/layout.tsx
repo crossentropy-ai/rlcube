@@ -7,6 +7,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: "Rubik's Cube Solver - with Reinforcement Learning",
   description: "A web application for solving Rubik's Cube using Reinforcement Learning techniques.",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({

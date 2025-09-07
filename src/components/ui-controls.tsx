@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, ButtonGroup, Card, CardBody, Slider } from '@heroui/react';
+import { Button, ButtonGroup, Card, CardBody, Checkbox, Slider } from '@heroui/react';
 import { useState } from 'react';
 
 import { useControlContext } from '@/contexts/control-context';
@@ -9,8 +9,16 @@ import { Actions } from './consts';
 
 export const UIControls = () => {
   const [isControlsOpen, setIsControlsOpen] = useState(true);
-  const { rubiksCubeRef, setBackground, cubeRoughness, setCubeRoughness, cubeSpeed, setCubeSpeed } =
-    useControlContext();
+  const {
+    rubiksCubeRef,
+    showRotationIndicators,
+    setShowRotationIndicators,
+    setBackground,
+    cubeRoughness,
+    setCubeRoughness,
+    cubeSpeed,
+    setCubeSpeed,
+  } = useControlContext();
 
   const scramble = () => {
     const scrambleSteps = Array.from({ length: 20 }, () => Actions[Math.floor(Math.random() * Actions.length)]);
@@ -49,6 +57,10 @@ export const UIControls = () => {
           >
             <div className="flex flex-col gap-2 mt-6">
               <div className="flex items-center justify-between">
+                <div className="text-sm">Rotation Indicators</div>
+                <Checkbox isSelected={showRotationIndicators} onValueChange={setShowRotationIndicators} />
+              </div>
+              <div className="flex items-center justify-between">
                 <div className="text-sm">Background</div>
                 <ButtonGroup size="sm">
                   <Button onPress={() => setBackground('sunset')}>Sunset</Button>
@@ -84,7 +96,7 @@ export const UIControls = () => {
                 </Button>
               </div>
               <div className="text-sm italic font-bold underline text-primary cursor-pointer" onClick={train}>
-                Train my own model!
+                Train your own model!
               </div>
             </div>
           </div>

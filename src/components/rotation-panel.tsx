@@ -4,6 +4,8 @@ import { useLoader } from '@react-three/fiber';
 import { useState } from 'react';
 import { TextureLoader } from 'three';
 
+import { useControlContext } from '@/contexts/control-context';
+
 import { FacingDirection, RotationDirection, RotationStep, Rotations } from './consts';
 
 type RotationPanelProps = {
@@ -13,6 +15,7 @@ type RotationPanelProps = {
 };
 
 export const RotationPanel = ({ facingDirection, direction, onClick }: RotationPanelProps) => {
+  const { showRotationIndicators } = useControlContext();
   const clockwise = direction === 'clockwise';
   const texture = useLoader(TextureLoader, `/textures/${direction}.png`);
   const [opacity, setOpacity] = useState(0);
@@ -43,7 +46,13 @@ export const RotationPanel = ({ facingDirection, direction, onClick }: RotationP
       onClick={handleClick}
     >
       <planeGeometry args={[0.8, 1.6]} />
-      <meshStandardMaterial color={'#aaaaaa'} roughness={0.5} opacity={opacity} map={texture} transparent />
+      <meshStandardMaterial
+        color={'#aaaaaa'}
+        roughness={0.5}
+        opacity={showRotationIndicators ? 1 : opacity}
+        map={texture}
+        transparent
+      />
     </mesh>
   );
 };
