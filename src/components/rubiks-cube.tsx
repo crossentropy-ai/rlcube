@@ -3,7 +3,7 @@ import { CubePiece } from "./cube-piece";
 import { Rotator, RotatorRef } from "./rotator";
 import { CubesProvider } from "@/contexts/cubes-context";
 import { Group } from "three";
-import { FacingDirection } from "./consts";
+import { RotationStep } from "./consts";
 
 const CUBE_POSITIONS: Array<[number, number, number]> = [];
 for (let x = -0.5; x <= 0.5; x += 1) {
@@ -15,12 +15,7 @@ for (let x = -0.5; x <= 0.5; x += 1) {
 }
 
 export type RubiksCubeRef = {
-  scramble: (
-    steps: Array<{
-      faceDirection: FacingDirection;
-      direction: "clockwise" | "counter-clockwise";
-    }>,
-  ) => void;
+  rotate: (steps: Array<RotationStep>) => void;
 };
 
 type RubiksCubeProps = {
@@ -34,12 +29,7 @@ export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(
     const rotatorRef = useRef<RotatorRef | null>(null);
 
     useImperativeHandle(ref, () => ({
-      scramble: (
-        steps: Array<{
-          faceDirection: FacingDirection;
-          direction: "clockwise" | "counter-clockwise";
-        }>,
-      ) => rotatorRef.current?.rotate(steps),
+      rotate: (steps: Array<RotationStep>) => rotatorRef.current?.rotate(steps),
     }));
 
     return (

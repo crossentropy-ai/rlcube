@@ -29,7 +29,7 @@ export const Canvas = () => {
         { length: 20 },
         () => Actions[Math.floor(Math.random() * Actions.length)],
       );
-      rubiksCubeRef.current?.scramble(scrambleSteps);
+      rubiksCubeRef.current?.rotate(scrambleSteps);
     }),
   });
 

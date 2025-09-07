@@ -6,6 +6,8 @@ export type FacingDirection =
   | "top"
   | "bottom";
 
+export type RotationDirection = "clockwise" | "counter-clockwise";
+
 export const Rotations: Record<FacingDirection, [number, number, number]> = {
   front: [0, 0, 0],
   back: [0, Math.PI, 0],
@@ -15,10 +17,12 @@ export const Rotations: Record<FacingDirection, [number, number, number]> = {
   bottom: [Math.PI / 2, 0, 0],
 };
 
-export const Actions: Array<{
+export type RotationStep = {
   faceDirection: FacingDirection;
-  direction: "clockwise" | "counter-clockwise";
-}> = [
+  direction: RotationDirection;
+};
+
+export const Actions: Array<RotationStep> = [
   { faceDirection: "front", direction: "clockwise" },
   { faceDirection: "front", direction: "counter-clockwise" },
   { faceDirection: "right", direction: "clockwise" },

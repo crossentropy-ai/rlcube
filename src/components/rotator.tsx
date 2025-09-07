@@ -1,5 +1,5 @@
 import { useCubesContext } from "@/contexts/cubes-context";
-import { FacingDirection } from "./consts";
+import { FacingDirection, RotationStep } from "./consts";
 import { RotationPanel } from "./rotation-panel";
 import { Group } from "three";
 import {
@@ -11,19 +11,8 @@ import {
 } from "react";
 import { useFrame } from "@react-three/fiber";
 
-type RotateArgs = {
-  rotatingFaceDirection: FacingDirection;
-  rotatingDirection: "clockwise" | "counter-clockwise";
-  rotatingGroup: Group;
-};
-
 export type RotatorRef = {
-  rotate: (
-    steps: Array<{
-      faceDirection: FacingDirection;
-      direction: "clockwise" | "counter-clockwise";
-    }>,
-  ) => void;
+  rotate: (steps: Array<RotationStep>) => void;
 };
 
 type RotatorProps = {
@@ -32,108 +21,56 @@ type RotatorProps = {
 
 export const Rotator = forwardRef<RotatorRef, RotatorProps>(
   ({ cubeSpeed }: RotatorProps, ref) => {
+    const cubeSpeedRef = useRef(cubeSpeed);
+    cubeSpeedRef.current = cubeSpeed;
     const { getCubes, cubeGroupRef } = useCubesContext();
-    const rotationSteps = useRef<
-      Array<{
-        faceDirection: FacingDirection;
-        direction: "clockwise" | "counter-clockwise";
-      }>
-    >([]);
+    const rotationSteps = useRef<Array<RotationStep>>([]);
 
     useImperativeHandle(ref, () => ({
-      rotate: (
-        steps: Array<{
-          faceDirection: FacingDirection;
-          direction: "clockwise" | "counter-clockwise";
-        }>,
-      ) => {
-        steps.forEach((step) => {
-          rotationSteps.current.push(step);
-        });
-      },
+      rotate: (steps: Array<RotationStep>) =>
+        rotationSteps.current.push(...steps),
     }));
 
-    const rotate = (
-      rotatingFaceDirection: FacingDirection,
-      rotatingDirection: "clockwise" | "counter-clockwise",
-      rotatingGroup: Group,
-      delta: number,
-    ) => {
-      let sign = 0;
-      switch (rotatingFaceDirection) {
-        case "front":
-          sign = rotatingDirection === "clockwise" ? -1 : 1;
-          rotatingGroup.rotation.z += sign * delta * cubeSpeed;
-          if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
-            rotatingGroup.rotation.z = (Math.PI / 2) * sign;
-            return true;
-          }
-          return false;
-        case "back":
-          sign = rotatingDirection === "clockwise" ? 1 : -1;
-          rotatingGroup.rotation.z += sign * delta * cubeSpeed;
-          if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
-            rotatingGroup.rotation.z = (Math.PI / 2) * sign;
-            return true;
-          }
-          return false;
-        case "left":
-          sign = rotatingDirection === "clockwise" ? 1 : -1;
-          rotatingGroup.rotation.x += sign * delta * cubeSpeed;
-          if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
-            rotatingGroup.rotation.x = (Math.PI / 2) * sign;
-            return true;
-          }
-          return false;
-        case "right":
-          sign = rotatingDirection === "clockwise" ? -1 : 1;
-          rotatingGroup.rotation.x += sign * delta * cubeSpeed;
-          if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
-            rotatingGroup.rotation.x = (Math.PI / 2) * sign;
-            return true;
-          }
-          return false;
-        case "top":
-          sign = rotatingDirection === "clockwise" ? -1 : 1;
-          rotatingGroup.rotation.y += sign * delta * cubeSpeed;
-          if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
-            rotatingGroup.rotation.y = (Math.PI / 2) * sign;
-            return true;
-          }
-          return false;
-        case "bottom":
-          sign = rotatingDirection === "clockwise" ? 1 : -1;
-          rotatingGroup.rotation.y += sign * delta * cubeSpeed;
-          if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
-            rotatingGroup.rotation.y = (Math.PI / 2) * sign;
-            return true;
-          }
-          return false;
-      }
-    };
-
     const frameCallback = useMemo(() => {
-      let rotationStep: {
-        faceDirection: FacingDirection;
-        direction: "clockwise" | "counter-clockwise";
-      } | null = null;
+      let rotationStep: RotationStep | null = null;
       let rotatingGroup = new Group();
 
-      const beforeRotationStep = (step: {
-        faceDirection: FacingDirection;
-        direction: "clockwise" | "counter-clockwise";
-      }) => {
-        const cubes = getCubes(step.faceDirection);
-        rotationStep = step;
-        rotatingGroup = new Group();
-        cubeGroupRef.current?.add(rotatingGroup);
-        cubes.forEach((cube) => rotatingGroup.attach(cube));
-      };
-      const afterRotationStep = () => {
-        rotationStep = null;
-        const children = [...rotatingGroup.children];
-        children.forEach((child) => cubeGroupRef.current?.attach(child));
-        cubeGroupRef.current?.remove(rotatingGroup);
+      const rotate = (step: RotationStep, group: Group, delta: number) => {
+        let sign = 0;
+        let axis: "x" | "y" | "z" = "x";
+        switch (step.faceDirection) {
+          case "front":
+            sign = step.direction === "clockwise" ? -1 : 1;
+            axis = "z";
+            break;
+          case "back":
+            sign = step.direction === "clockwise" ? 1 : -1;
+            axis = "z";
+            break;
+          case "left":
+            sign = step.direction === "clockwise" ? 1 : -1;
+            axis = "x";
+            break;
+          case "right":
+            sign = step.direction === "clockwise" ? -1 : 1;
+            axis = "x";
+            break;
+          case "top":
+            sign = step.direction === "clockwise" ? -1 : 1;
+            axis = "y";
+            break;
+          case "bottom":
+            sign = step.direction === "clockwise" ? 1 : -1;
+            axis = "y";
+            break;
+        }
+
+        group.rotation[axis] += sign * delta * cubeSpeedRef.current;
+        if (Math.abs(group.rotation[axis]) > Math.PI / 2) {
+          group.rotation[axis] = (Math.PI / 2) * sign;
+          return true;
+        }
+        return false;
       };
 
       return (state: unknown, delta: number) => {
@@ -142,27 +79,23 @@ export const Rotator = forwardRef<RotatorRef, RotatorProps>(
         if (!rotationStep) {
           const step = rotationSteps.current.shift();
           if (!step) return;
-          beforeRotationStep(step);
+          rotationStep = step;
+          const cubes = getCubes(step.faceDirection);
+          rotatingGroup = new Group();
+          cubeGroupRef.current?.add(rotatingGroup);
+          cubes.forEach((cube) => rotatingGroup.attach(cube));
         }
 
-        const done = rotate(
-          rotationStep?.faceDirection!,
-          rotationStep?.direction!,
-          rotatingGroup,
-          delta,
-        );
-        if (done) afterRotationStep();
+        const done = rotate(rotationStep, rotatingGroup, delta);
+        if (done) {
+          rotationStep = null;
+          const children = [...rotatingGroup.children];
+          children.forEach((child) => cubeGroupRef.current?.attach(child));
+          cubeGroupRef.current?.remove(rotatingGroup);
+        }
       };
-    }, []);
-
+    }, [cubeGroupRef, getCubes]);
     useFrame(frameCallback);
-
-    const handleClick = (
-      facingDirection: FacingDirection,
-      direction: "clockwise" | "counter-clockwise",
-    ) => {
-      rotationSteps.current.push({ faceDirection: facingDirection, direction });
-    };
 
     return (
       <>
@@ -172,12 +105,12 @@ export const Rotator = forwardRef<RotatorRef, RotatorProps>(
               <RotationPanel
                 direction="clockwise"
                 facingDirection={facingDirection as FacingDirection}
-                onClick={handleClick}
+                onClick={(s) => rotationSteps.current.push(s)}
               />
               <RotationPanel
                 direction="counter-clockwise"
                 facingDirection={facingDirection as FacingDirection}
-                onClick={handleClick}
+                onClick={(s) => rotationSteps.current.push(s)}
               />
             </Fragment>
           ),

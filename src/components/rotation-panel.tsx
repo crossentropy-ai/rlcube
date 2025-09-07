@@ -2,21 +2,23 @@
 
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { Rotations, FacingDirection } from "./consts";
+import {
+  Rotations,
+  FacingDirection,
+  RotationStep,
+  RotationDirection,
+} from "./consts";
 import { useState } from "react";
 
 type RotationPanelProps = {
-  direction: "clockwise" | "counter-clockwise";
   facingDirection: FacingDirection;
-  onClick?: (
-    facingDirection: FacingDirection,
-    direction: "clockwise" | "counter-clockwise",
-  ) => void;
+  direction: RotationDirection;
+  onClick?: (step: RotationStep) => void;
 };
 
 export const RotationPanel = ({
-  direction,
   facingDirection,
+  direction,
   onClick,
 }: RotationPanelProps) => {
   const clockwise = direction === "clockwise";
@@ -32,9 +34,8 @@ export const RotationPanel = ({
     bottom: clockwise ? [0.5, -1.01, 0] : [-0.5, -1.01, 0],
   };
 
-  const handleClick = () => {
-    onClick?.(facingDirection, direction);
-  };
+  const handleClick = () =>
+    onClick?.({ faceDirection: facingDirection, direction });
 
   return (
     <mesh
