@@ -1,14 +1,17 @@
 "use client";
 
-import { useControls, Leva } from "leva";
+import { useControls, Leva, button } from "leva";
 import { Canvas as ThreeCanvas } from "@react-three/fiber";
 
 import { Env } from "../components/env";
-import { RubiksCube } from "./rubiks-cube";
-import { useState, useTransition } from "react";
+import { RubiksCube, RubiksCubeRef } from "./rubiks-cube";
+import { useRef, useState, useTransition } from "react";
 import { PresetsType } from "@react-three/drei/helpers/environment-assets";
+import { Actions } from "./consts";
 
 export const Canvas = () => {
+  const rubiksCubeRef = useRef<RubiksCubeRef>(null);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, startTransition] = useTransition();
   const [background, setBackground] = useState<PresetsType>("sunset");
@@ -21,13 +24,24 @@ export const Canvas = () => {
       options: ["sunset", "dawn", "forest"],
       onChange: (value) => startTransition(() => setBackground(value)),
     },
+    Scramble: button(() => {
+      const scrambleSteps = Array.from(
+        { length: 20 },
+        () => Actions[Math.floor(Math.random() * Actions.length)],
+      );
+      rubiksCubeRef.current?.scramble(scrambleSteps);
+    }),
   });
 
   return (
     <>
       <Leva />
       <ThreeCanvas shadows camera={{ position: [0, 0, 4.5], fov: 50 }}>
-        <RubiksCube cubeRoughness={cubeRoughness} cubeSpeed={cubeSpeed} />
+        <RubiksCube
+          ref={rubiksCubeRef}
+          cubeRoughness={cubeRoughness}
+          cubeSpeed={cubeSpeed}
+        />
         <Env background={background} />
       </ThreeCanvas>
     </>

@@ -2,7 +2,13 @@ import { useCubesContext } from "@/contexts/cubes-context";
 import { FacingDirection } from "./consts";
 import { RotationPanel } from "./rotation-panel";
 import { Group } from "three";
-import { Fragment, useRef } from "react";
+import {
+  forwardRef,
+  Fragment,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 import { useFrame } from "@react-three/fiber";
 
 type RotateArgs = {
@@ -11,117 +17,174 @@ type RotateArgs = {
   rotatingGroup: Group;
 };
 
+export type RotatorRef = {
+  rotate: (
+    steps: Array<{
+      faceDirection: FacingDirection;
+      direction: "clockwise" | "counter-clockwise";
+    }>,
+  ) => void;
+};
+
 type RotatorProps = {
   cubeSpeed: number;
 };
 
-export const Rotator = ({ cubeSpeed }: RotatorProps) => {
-  const { getCubes, cubeGroupRef } = useCubesContext();
-  const isRotating = useRef(false);
-  const rotateArgs = useRef<RotateArgs>({
-    rotatingFaceDirection: "front",
-    rotatingDirection: "clockwise",
-    rotatingGroup: new Group(),
-  });
+export const Rotator = forwardRef<RotatorRef, RotatorProps>(
+  ({ cubeSpeed }: RotatorProps, ref) => {
+    const { getCubes, cubeGroupRef } = useCubesContext();
+    const rotationSteps = useRef<
+      Array<{
+        faceDirection: FacingDirection;
+        direction: "clockwise" | "counter-clockwise";
+      }>
+    >([]);
 
-  useFrame((state, delta) => {
-    const { rotatingFaceDirection, rotatingDirection, rotatingGroup } =
-      rotateArgs.current;
-    const cubeGroup = cubeGroupRef.current;
-    if (!isRotating.current || !cubeGroup) return;
+    useImperativeHandle(ref, () => ({
+      rotate: (
+        steps: Array<{
+          faceDirection: FacingDirection;
+          direction: "clockwise" | "counter-clockwise";
+        }>,
+      ) => {
+        steps.forEach((step) => {
+          rotationSteps.current.push(step);
+        });
+      },
+    }));
 
-    let sign = 0;
-    switch (rotatingFaceDirection) {
-      case "front":
-        sign = rotatingDirection === "clockwise" ? -1 : 1;
-        rotatingGroup.rotation.z += sign * delta * cubeSpeed;
-        if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
-          rotatingGroup.rotation.z = (Math.PI / 2) * sign;
-          isRotating.current = false;
+    const rotate = (
+      rotatingFaceDirection: FacingDirection,
+      rotatingDirection: "clockwise" | "counter-clockwise",
+      rotatingGroup: Group,
+      delta: number,
+    ) => {
+      let sign = 0;
+      switch (rotatingFaceDirection) {
+        case "front":
+          sign = rotatingDirection === "clockwise" ? -1 : 1;
+          rotatingGroup.rotation.z += sign * delta * cubeSpeed;
+          if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
+            rotatingGroup.rotation.z = (Math.PI / 2) * sign;
+            return true;
+          }
+          return false;
+        case "back":
+          sign = rotatingDirection === "clockwise" ? 1 : -1;
+          rotatingGroup.rotation.z += sign * delta * cubeSpeed;
+          if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
+            rotatingGroup.rotation.z = (Math.PI / 2) * sign;
+            return true;
+          }
+          return false;
+        case "left":
+          sign = rotatingDirection === "clockwise" ? 1 : -1;
+          rotatingGroup.rotation.x += sign * delta * cubeSpeed;
+          if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
+            rotatingGroup.rotation.x = (Math.PI / 2) * sign;
+            return true;
+          }
+          return false;
+        case "right":
+          sign = rotatingDirection === "clockwise" ? -1 : 1;
+          rotatingGroup.rotation.x += sign * delta * cubeSpeed;
+          if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
+            rotatingGroup.rotation.x = (Math.PI / 2) * sign;
+            return true;
+          }
+          return false;
+        case "top":
+          sign = rotatingDirection === "clockwise" ? -1 : 1;
+          rotatingGroup.rotation.y += sign * delta * cubeSpeed;
+          if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
+            rotatingGroup.rotation.y = (Math.PI / 2) * sign;
+            return true;
+          }
+          return false;
+        case "bottom":
+          sign = rotatingDirection === "clockwise" ? 1 : -1;
+          rotatingGroup.rotation.y += sign * delta * cubeSpeed;
+          if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
+            rotatingGroup.rotation.y = (Math.PI / 2) * sign;
+            return true;
+          }
+          return false;
+      }
+    };
+
+    const frameCallback = useMemo(() => {
+      let rotationStep: {
+        faceDirection: FacingDirection;
+        direction: "clockwise" | "counter-clockwise";
+      } | null = null;
+      let rotatingGroup = new Group();
+
+      const beforeRotationStep = (step: {
+        faceDirection: FacingDirection;
+        direction: "clockwise" | "counter-clockwise";
+      }) => {
+        const cubes = getCubes(step.faceDirection);
+        rotationStep = step;
+        rotatingGroup = new Group();
+        cubeGroupRef.current?.add(rotatingGroup);
+        cubes.forEach((cube) => rotatingGroup.attach(cube));
+      };
+      const afterRotationStep = () => {
+        rotationStep = null;
+        const children = [...rotatingGroup.children];
+        children.forEach((child) => cubeGroupRef.current?.attach(child));
+        cubeGroupRef.current?.remove(rotatingGroup);
+      };
+
+      return (state: unknown, delta: number) => {
+        if (!cubeGroupRef.current) return;
+        if (rotationSteps.current.length === 0 && !rotationStep) return;
+        if (!rotationStep) {
+          const step = rotationSteps.current.shift();
+          if (!step) return;
+          beforeRotationStep(step);
         }
-        break;
-      case "back":
-        sign = rotatingDirection === "clockwise" ? 1 : -1;
-        rotatingGroup.rotation.z += sign * delta * cubeSpeed;
-        if (Math.abs(rotatingGroup.rotation.z) > Math.PI / 2) {
-          rotatingGroup.rotation.z = (Math.PI / 2) * sign;
-          isRotating.current = false;
-        }
-        break;
-      case "left":
-        sign = rotatingDirection === "clockwise" ? 1 : -1;
-        rotatingGroup.rotation.x += sign * delta * cubeSpeed;
-        if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
-          rotatingGroup.rotation.x = (Math.PI / 2) * sign;
-          isRotating.current = false;
-        }
-        break;
-      case "right":
-        sign = rotatingDirection === "clockwise" ? -1 : 1;
-        rotatingGroup.rotation.x += sign * delta * cubeSpeed;
-        if (Math.abs(rotatingGroup.rotation.x) > Math.PI / 2) {
-          rotatingGroup.rotation.x = (Math.PI / 2) * sign;
-          isRotating.current = false;
-        }
-        break;
-      case "top":
-        sign = rotatingDirection === "clockwise" ? -1 : 1;
-        rotatingGroup.rotation.y += sign * delta * cubeSpeed;
-        if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
-          rotatingGroup.rotation.y = (Math.PI / 2) * sign;
-          isRotating.current = false;
-        }
-        break;
-      case "bottom":
-        sign = rotatingDirection === "clockwise" ? 1 : -1;
-        rotatingGroup.rotation.y += sign * delta * cubeSpeed;
-        if (Math.abs(rotatingGroup.rotation.y) > Math.PI / 2) {
-          rotatingGroup.rotation.y = (Math.PI / 2) * sign;
-          isRotating.current = false;
-        }
-        break;
-    }
 
-    if (isRotating.current) return;
-    const children = [...rotatingGroup.children];
-    children.forEach((child) => cubeGroup.attach(child));
-    cubeGroup.remove(rotatingGroup);
-  });
+        const done = rotate(
+          rotationStep?.faceDirection!,
+          rotationStep?.direction!,
+          rotatingGroup,
+          delta,
+        );
+        if (done) afterRotationStep();
+      };
+    }, []);
 
-  const handleClick = (
-    facingDirection: FacingDirection,
-    direction: "clockwise" | "counter-clockwise",
-  ) => {
-    if (isRotating.current || !cubeGroupRef.current) return;
-    const cubes = getCubes(facingDirection);
+    useFrame(frameCallback);
 
-    rotateArgs.current.rotatingFaceDirection = facingDirection;
-    rotateArgs.current.rotatingDirection = direction;
-    rotateArgs.current.rotatingGroup = new Group();
-    cubeGroupRef.current.add(rotateArgs.current.rotatingGroup);
-    cubes.forEach((cube) => rotateArgs.current.rotatingGroup.attach(cube));
+    const handleClick = (
+      facingDirection: FacingDirection,
+      direction: "clockwise" | "counter-clockwise",
+    ) => {
+      rotationSteps.current.push({ faceDirection: facingDirection, direction });
+    };
 
-    isRotating.current = true;
-  };
+    return (
+      <>
+        {["front", "back", "left", "right", "top", "bottom"].map(
+          (facingDirection) => (
+            <Fragment key={facingDirection}>
+              <RotationPanel
+                direction="clockwise"
+                facingDirection={facingDirection as FacingDirection}
+                onClick={handleClick}
+              />
+              <RotationPanel
+                direction="counter-clockwise"
+                facingDirection={facingDirection as FacingDirection}
+                onClick={handleClick}
+              />
+            </Fragment>
+          ),
+        )}
+      </>
+    );
+  },
+);
 
-  return (
-    <>
-      {["front", "back", "left", "right", "top", "bottom"].map(
-        (facingDirection) => (
-          <Fragment key={facingDirection}>
-            <RotationPanel
-              direction="clockwise"
-              facingDirection={facingDirection as FacingDirection}
-              onClick={handleClick}
-            />
-            <RotationPanel
-              direction="counter-clockwise"
-              facingDirection={facingDirection as FacingDirection}
-              onClick={handleClick}
-            />
-          </Fragment>
-        ),
-      )}
-    </>
-  );
-};
+Rotator.displayName = "Rotator";
