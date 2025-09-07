@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import { RoundedBox } from "@react-three/drei";
-import { useEffect, useRef, useState } from "react";
-import { FacingDirection, Rotations } from "./consts";
-import { Mesh } from "three";
-import { rotationController } from "./rotation-controller";
+import { RoundedBox } from '@react-three/drei';
+import { useEffect, useRef, useState } from 'react';
+import { Mesh } from 'three';
+
+import { FacingDirection, Rotations } from './consts';
+import { rotationController } from './rotation-controller';
 
 // Standard Rubik's cube colors
 const CUBE_COLORS = {
-  front: "#ff0000", // Red
-  back: "#ff00ff", // Purple
-  left: "#00ff00", // Green
-  right: "#0000ff", // Blue
-  top: "#ffff00", // Yellow
-  bottom: "#ffffff", // White
+  front: '#ff0000', // Red
+  back: '#ff00ff', // Purple
+  left: '#00ff00', // Green
+  right: '#0000ff', // Blue
+  top: '#ffff00', // Yellow
+  bottom: '#ffffff', // White
 };
 
 type CubePieceProps = {
@@ -52,28 +53,16 @@ export const CubePiece = ({ roughness, initialPosition }: CubePieceProps) => {
   return (
     <mesh position={position} ref={meshRef}>
       <RoundedBox args={[0.95, 0.95, 0.95]} radius={0.05} smoothness={4}>
-        <meshStandardMaterial
-          color="#2a2a2a"
-          metalness={1}
-          roughness={roughness}
-        />
+        <meshStandardMaterial color="#2a2a2a" metalness={1} roughness={roughness} />
       </RoundedBox>
 
       {Object.entries(visibleFaces).map(([face, isVisible]) => {
         if (!isVisible) return null;
         const color = CUBE_COLORS[face as keyof typeof CUBE_COLORS];
         return (
-          <mesh
-            key={face}
-            position={positions[face as FacingDirection]}
-            rotation={Rotations[face as FacingDirection]}
-          >
+          <mesh key={face} position={positions[face as FacingDirection]} rotation={Rotations[face as FacingDirection]}>
             <planeGeometry args={[0.8, 0.8]} />
-            <meshStandardMaterial
-              color={color}
-              metalness={1}
-              roughness={roughness}
-            />
+            <meshStandardMaterial color={color} metalness={1} roughness={roughness} />
           </mesh>
         );
       })}

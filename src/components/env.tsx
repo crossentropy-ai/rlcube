@@ -1,8 +1,9 @@
-"ue client";
+'ue client';
 
-import { Environment, CameraControls } from "@react-three/drei";
-import { PresetsType } from "@react-three/drei/helpers/environment-assets";
-import { CameraControlsImpl } from "@react-three/drei";
+import { CameraControls, Environment } from '@react-three/drei';
+import { CameraControlsImpl } from '@react-three/drei';
+import { PresetsType } from '@react-three/drei/helpers/environment-assets';
+
 const { ACTION } = CameraControlsImpl;
 
 type EnvProps = {

@@ -1,14 +1,10 @@
-"use client";
+'use client';
 
-import { useLoader } from "@react-three/fiber";
-import { TextureLoader } from "three";
-import {
-  Rotations,
-  FacingDirection,
-  RotationStep,
-  RotationDirection,
-} from "./consts";
-import { useState } from "react";
+import { useLoader } from '@react-three/fiber';
+import { useState } from 'react';
+import { TextureLoader } from 'three';
+
+import { FacingDirection, RotationDirection, RotationStep, Rotations } from './consts';
 
 type RotationPanelProps = {
   facingDirection: FacingDirection;
@@ -16,12 +12,8 @@ type RotationPanelProps = {
   onClick?: (step: RotationStep) => void;
 };
 
-export const RotationPanel = ({
-  facingDirection,
-  direction,
-  onClick,
-}: RotationPanelProps) => {
-  const clockwise = direction === "clockwise";
+export const RotationPanel = ({ facingDirection, direction, onClick }: RotationPanelProps) => {
+  const clockwise = direction === 'clockwise';
   const texture = useLoader(TextureLoader, `/textures/${direction}.png`);
   const [opacity, setOpacity] = useState(0);
 
@@ -34,8 +26,7 @@ export const RotationPanel = ({
     bottom: clockwise ? [0.5, -1.01, 0] : [-0.5, -1.01, 0],
   };
 
-  const handleClick = () =>
-    onClick?.({ faceDirection: facingDirection, direction });
+  const handleClick = () => onClick?.({ faceDirection: facingDirection, direction });
 
   return (
     <mesh
@@ -43,22 +34,16 @@ export const RotationPanel = ({
       rotation={Rotations[facingDirection]}
       onPointerEnter={() => {
         setOpacity(1);
-        document.body.style.cursor = "pointer";
+        document.body.style.cursor = 'pointer';
       }}
       onPointerLeave={() => {
         setOpacity(0);
-        document.body.style.cursor = "default";
+        document.body.style.cursor = 'default';
       }}
       onClick={handleClick}
     >
       <planeGeometry args={[0.8, 1.6]} />
-      <meshStandardMaterial
-        color={"#aaaaaa"}
-        roughness={0.5}
-        opacity={opacity}
-        map={texture}
-        transparent
-      />
+      <meshStandardMaterial color={'#aaaaaa'} roughness={0.5} opacity={opacity} map={texture} transparent />
     </mesh>
   );
 };

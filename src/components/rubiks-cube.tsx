@@ -1,9 +1,10 @@
-import { useRef, forwardRef, useImperativeHandle, useEffect } from "react";
-import { CubePiece } from "./cube-piece";
-import { Rotator, RotatorRef } from "./rotator";
-import { Group } from "three";
-import { RotationStep } from "./consts";
-import { rotationController } from "./rotation-controller";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { Group } from 'three';
+
+import { RotationStep } from './consts';
+import { CubePiece } from './cube-piece';
+import { rotationController } from './rotation-controller';
+import { Rotator, RotatorRef } from './rotator';
 
 const CUBE_POSITIONS: Array<[number, number, number]> = [];
 for (let x = -0.5; x <= 0.5; x += 1) {
@@ -23,35 +24,28 @@ type RubiksCubeProps = {
   cubeSpeed: number;
 };
 
-export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(
-  ({ cubeRoughness, cubeSpeed }, ref) => {
-    const cubeGroupRef = useRef<Group | null>(null);
-    const rotatorRef = useRef<RotatorRef | null>(null);
+export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(({ cubeRoughness, cubeSpeed }, ref) => {
+  const cubeGroupRef = useRef<Group | null>(null);
+  const rotatorRef = useRef<RotatorRef | null>(null);
 
-    useImperativeHandle(ref, () => ({
-      rotate: (steps: Array<RotationStep>) => rotatorRef.current?.rotate(steps),
-    }));
+  useImperativeHandle(ref, () => ({
+    rotate: (steps: Array<RotationStep>) => rotatorRef.current?.rotate(steps),
+  }));
 
-    useEffect(() => {
-      if (cubeGroupRef.current)
-        rotationController.setCubeGroup(cubeGroupRef.current);
-    }, [cubeGroupRef]);
+  useEffect(() => {
+    if (cubeGroupRef.current) rotationController.setCubeGroup(cubeGroupRef.current);
+  }, [cubeGroupRef]);
 
-    return (
-      <>
-        <group ref={cubeGroupRef}>
-          {CUBE_POSITIONS.map((position) => (
-            <CubePiece
-              key={position.join(",")}
-              initialPosition={position}
-              roughness={cubeRoughness}
-            />
-          ))}
-        </group>
-        <Rotator ref={rotatorRef} cubeSpeed={cubeSpeed} />
-      </>
-    );
-  },
-);
+  return (
+    <>
+      <group ref={cubeGroupRef}>
+        {CUBE_POSITIONS.map((position) => (
+          <CubePiece key={position.join(',')} initialPosition={position} roughness={cubeRoughness} />
+        ))}
+      </group>
+      <Rotator ref={rotatorRef} cubeSpeed={cubeSpeed} />
+    </>
+  );
+});
 
-RubiksCube.displayName = "RubiksCube";
+RubiksCube.displayName = 'RubiksCube';

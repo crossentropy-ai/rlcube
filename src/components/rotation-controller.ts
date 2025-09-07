@@ -1,5 +1,6 @@
-import { FacingDirection, RotationStep } from "./consts";
-import { Group, Mesh } from "three";
+import { Group, Mesh } from 'three';
+
+import { FacingDirection, RotationStep } from './consts';
 
 export class RotationController {
   private static instance: RotationController;
@@ -21,31 +22,31 @@ export class RotationController {
 
   private rotate(step: RotationStep, group: Group, delta: number) {
     let sign = 0;
-    let axis: "x" | "y" | "z" = "x";
+    let axis: 'x' | 'y' | 'z' = 'x';
     switch (step.faceDirection) {
-      case "front":
-        sign = step.direction === "clockwise" ? -1 : 1;
-        axis = "z";
+      case 'front':
+        sign = step.direction === 'clockwise' ? -1 : 1;
+        axis = 'z';
         break;
-      case "back":
-        sign = step.direction === "clockwise" ? 1 : -1;
-        axis = "z";
+      case 'back':
+        sign = step.direction === 'clockwise' ? 1 : -1;
+        axis = 'z';
         break;
-      case "left":
-        sign = step.direction === "clockwise" ? 1 : -1;
-        axis = "x";
+      case 'left':
+        sign = step.direction === 'clockwise' ? 1 : -1;
+        axis = 'x';
         break;
-      case "right":
-        sign = step.direction === "clockwise" ? -1 : 1;
-        axis = "x";
+      case 'right':
+        sign = step.direction === 'clockwise' ? -1 : 1;
+        axis = 'x';
         break;
-      case "top":
-        sign = step.direction === "clockwise" ? -1 : 1;
-        axis = "y";
+      case 'top':
+        sign = step.direction === 'clockwise' ? -1 : 1;
+        axis = 'y';
         break;
-      case "bottom":
-        sign = step.direction === "clockwise" ? 1 : -1;
-        axis = "y";
+      case 'bottom':
+        sign = step.direction === 'clockwise' ? 1 : -1;
+        axis = 'y';
         break;
     }
 
@@ -76,17 +77,17 @@ export class RotationController {
 
   getCubes(faceDirection: FacingDirection) {
     switch (faceDirection) {
-      case "front":
+      case 'front':
         return this.cubes.filter((m) => m.position.z > 0);
-      case "back":
+      case 'back':
         return this.cubes.filter((m) => m.position.z < 0);
-      case "left":
+      case 'left':
         return this.cubes.filter((m) => m.position.x < 0);
-      case "right":
+      case 'right':
         return this.cubes.filter((m) => m.position.x > 0);
-      case "top":
+      case 'top':
         return this.cubes.filter((m) => m.position.y > 0);
-      case "bottom":
+      case 'bottom':
         return this.cubes.filter((m) => m.position.y < 0);
     }
   }
@@ -123,3 +124,4 @@ export class RotationController {
 }
 
 export const rotationController = RotationController.getInstance();
+export const frameCallback = rotationController.frameCallback.bind(rotationController);
