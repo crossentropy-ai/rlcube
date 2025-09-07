@@ -29,6 +29,10 @@ export const UIControls = () => {
     rubiksCubeRef?.current?.reset();
   };
 
+  const showState = () => {
+    alert('Working on it!');
+  };
+
   const solve = () => {
     alert('Working on it!');
   };
@@ -89,9 +93,16 @@ export const UIControls = () => {
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
-                <Button onPress={scramble}>Scramble</Button>
-                <Button onPress={reset}>Reset</Button>
-                <Button className="ms-auto" color="success" onPress={solve}>
+                <ButtonGroup size="sm">
+                  <Button onPress={scramble}>Scramble</Button>
+                  <Button onPress={reset}>Reset</Button>
+                </ButtonGroup>
+
+                <Button size="sm" variant="light" onPress={showState}>
+                  Show State
+                </Button>
+
+                <Button size="sm" className="ms-auto" color="success" onPress={solve}>
                   Solve
                 </Button>
               </div>
