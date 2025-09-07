@@ -1,24 +1,15 @@
 "ue client";
 
-import { useState, useTransition } from "react";
 import { Environment, CameraControls } from "@react-three/drei";
 import { PresetsType } from "@react-three/drei/helpers/environment-assets";
-import { useControls } from "leva";
 import { CameraControlsImpl } from "@react-three/drei";
 const { ACTION } = CameraControlsImpl;
 
-export const Env = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, startTransition] = useTransition();
+type EnvProps = {
+  background: PresetsType;
+};
 
-  const [background, setBackground] = useState<PresetsType>("sunset");
-  useControls({
-    background: {
-      value: background,
-      options: ["sunset", "dawn", "forest"],
-      onChange: (value) => startTransition(() => setBackground(value)),
-    },
-  });
+export const Env = ({ background }: EnvProps) => {
   return (
     <>
       <CameraControls
@@ -27,6 +18,7 @@ export const Env = () => {
         azimuthAngle={0.8}
         maxPolarAngle={Math.PI / 1.2}
         minPolarAngle={-Math.PI / 1.2}
+        distance={10}
         maxDistance={10}
         minDistance={4}
         mouseButtons={{
