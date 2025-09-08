@@ -40,11 +40,11 @@ export class RotationController {
         sign = step.direction === 'clockwise' ? -1 : 1;
         axis = 'x';
         break;
-      case 'top':
+      case 'up':
         sign = step.direction === 'clockwise' ? -1 : 1;
         axis = 'y';
         break;
-      case 'bottom':
+      case 'down':
         sign = step.direction === 'clockwise' ? 1 : -1;
         axis = 'y';
         break;
@@ -70,8 +70,8 @@ export class RotationController {
       case 'left':
         axis = 'x';
         break;
-      case 'top':
-      case 'bottom':
+      case 'up':
+      case 'down':
         axis = 'y';
         break;
     }
@@ -135,15 +135,15 @@ export class RotationController {
         return this.cubes.filter((m) => m.position.x > 0);
       case 'left':
         return this.cubes.filter((m) => m.position.x < 0);
-      case 'top':
+      case 'up':
         return this.cubes.filter((m) => m.position.y > 0);
-      case 'bottom':
+      case 'down':
         return this.cubes.filter((m) => m.position.y < 0);
     }
   }
 
   initializeFaces() {
-    ['front', 'back', 'right', 'left', 'top', 'bottom'].forEach((f) => {
+    ['front', 'back', 'right', 'left', 'up', 'down'].forEach((f) => {
       const faceDirection = f as FacingDirection;
       const cubes = this.getCubes(faceDirection);
       const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
@@ -155,7 +155,7 @@ export class RotationController {
 
   getStatus() {
     const rotationsPy: Array<string> = [];
-    const status = ['front', 'back', 'right', 'left', 'top', 'bottom'].map((f) => {
+    const status = ['front', 'back', 'right', 'left', 'up', 'down'].map((f) => {
       const faceDirection = f as FacingDirection;
       const cubes = this.getCubes(faceDirection);
       const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);

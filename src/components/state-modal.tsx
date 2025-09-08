@@ -55,12 +55,12 @@ export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
                   <div className="font-mono">[{state[3].map((index) => Index2Color[index]).join(', ')}]</div>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <div className="text-sm w-24 font-mont">Top</div>
+                  <div className="text-sm w-24 font-mont">Up</div>
                   <div className="font-mono">{JSON.stringify(state[4])}</div>
                   <div className="font-mono">[{state[4].map((index) => Index2Color[index]).join(', ')}]</div>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <div className="text-sm w-24 font-mont">Bottom</div>
+                  <div className="text-sm w-24 font-mont">Down</div>
                   <div className="font-mono">{JSON.stringify(state[5])}</div>
                   <div className="font-mono">[{state[5].map((index) => Index2Color[index]).join(', ')}]</div>
                 </div>

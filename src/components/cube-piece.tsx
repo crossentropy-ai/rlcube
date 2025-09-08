@@ -38,16 +38,16 @@ export const CubePiece = forwardRef<CubePieceRef, CubePieceProps>(({ roughness, 
     back: z < 0,
     left: x < 0,
     right: x > 0,
-    top: y > 0,
-    bottom: y < 0,
+    up: y > 0,
+    down: y < 0,
   };
   const positions: Record<FacingDirection, [number, number, number]> = {
     front: [0, 0, 0.48],
     back: [0, 0, -0.48],
     right: [0.48, 0, 0],
     left: [-0.48, 0, 0],
-    top: [0, 0.48, 0],
-    bottom: [0, -0.48, 0],
+    up: [0, 0.48, 0],
+    down: [0, -0.48, 0],
   };
 
   return (

@@ -1,4 +1,4 @@
-export type FacingDirection = 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom';
+export type FacingDirection = 'front' | 'back' | 'right' | 'left' | 'up' | 'down';
 
 export type RotationDirection = 'clockwise' | 'counter-clockwise';
 
@@ -7,8 +7,8 @@ export const CubeColors: Record<FacingDirection, string> = {
   back: '#ff00ff', // Purple
   right: '#0000ff', // Blue
   left: '#00ff00', // Green
-  top: '#ffff00', // Yellow
-  bottom: '#ffffff', // White
+  up: '#ffff00', // Yellow
+  down: '#ffffff', // White
 };
 
 export const Color2Index: Record<string, number> = {
@@ -34,8 +34,8 @@ export const Rotations: Record<FacingDirection, [number, number, number]> = {
   back: [0, Math.PI, 0],
   right: [0, Math.PI / 2, 0],
   left: [0, -Math.PI / 2, 0],
-  top: [-Math.PI / 2, 0, 0],
-  bottom: [Math.PI / 2, 0, 0],
+  up: [-Math.PI / 2, 0, 0],
+  down: [Math.PI / 2, 0, 0],
 };
 
 export type RotationStep = {
@@ -52,8 +52,8 @@ export const Actions: Array<RotationStep> = [
   { faceDirection: 'right', direction: 'counter-clockwise' },
   { faceDirection: 'left', direction: 'clockwise' },
   { faceDirection: 'left', direction: 'counter-clockwise' },
-  { faceDirection: 'top', direction: 'clockwise' },
-  { faceDirection: 'top', direction: 'counter-clockwise' },
-  { faceDirection: 'bottom', direction: 'clockwise' },
-  { faceDirection: 'bottom', direction: 'counter-clockwise' },
+  { faceDirection: 'up', direction: 'clockwise' },
+  { faceDirection: 'up', direction: 'counter-clockwise' },
+  { faceDirection: 'down', direction: 'clockwise' },
+  { faceDirection: 'down', direction: 'counter-clockwise' },
 ];

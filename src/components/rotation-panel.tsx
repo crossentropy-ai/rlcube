@@ -25,8 +25,8 @@ export const RotationPanel = ({ facingDirection, direction, onClick }: RotationP
     back: clockwise ? [-0.5, 0, -1.01] : [0.5, 0, -1.01],
     left: clockwise ? [-1.01, 0, 0.5] : [-1.01, 0, -0.5],
     right: clockwise ? [1.01, 0, -0.5] : [1.01, 0, 0.5],
-    top: clockwise ? [0.5, 1.01, 0] : [-0.5, 1.01, 0],
-    bottom: clockwise ? [0.5, -1.01, 0] : [-0.5, -1.01, 0],
+    up: clockwise ? [0.5, 1.01, 0] : [-0.5, 1.01, 0],
+    down: clockwise ? [0.5, -1.01, 0] : [-0.5, -1.01, 0],
   };
 
   const handleClick = () => onClick?.({ faceDirection: facingDirection, direction });

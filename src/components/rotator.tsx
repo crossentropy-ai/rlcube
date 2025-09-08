@@ -24,7 +24,7 @@ export const Rotator = forwardRef<RotatorRef, RotatorProps>(({ cubeSpeed }: Rota
 
   return (
     <>
-      {['front', 'back', 'left', 'right', 'top', 'bottom'].map((facingDirection) => (
+      {['front', 'back', 'left', 'right', 'up', 'down'].map((facingDirection) => (
         <Fragment key={facingDirection}>
           <RotationPanel
             direction="clockwise"
