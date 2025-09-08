@@ -101,6 +101,10 @@ export class RotationController {
   static getInstance() {
     if (!RotationController.instance) {
       RotationController.instance = new RotationController();
+      if (typeof window !== 'undefined') {
+        // @ts-ignore
+        window.rotationController = RotationController.instance;
+      }
     }
     return RotationController.instance;
   }
