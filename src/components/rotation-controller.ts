@@ -86,15 +86,15 @@ export class RotationController {
         maxFace = face as Mesh;
       }
     }
-    if (!maxFace) return { colorIndex: -1, worldPosition: new Vector3(), rank: Infinity }; // this should never happen
+    if (!maxFace) throw new Error('maxFace is null'); // this should never happen
     const worldPosition = new Vector3();
     maxFace.getWorldPosition(worldPosition);
     const axis2 = ['x', 'y', 'z'].filter((x) => x !== axis) as Array<'x' | 'y' | 'z'>;
     const rank = worldPosition[axis2[0]] * 100 + worldPosition[axis2[1]] * 10;
     return {
-      colorIndex: maxFace.userData.faceColorIndex,
-      worldPosition: worldPosition,
-      rank: rank,
+      face: maxFace,
+      worldPosition,
+      rank,
     };
   }
 
@@ -142,12 +142,25 @@ export class RotationController {
     }
   }
 
+  initializeFaces() {
+    ['front', 'back', 'right', 'left', 'top', 'bottom'].forEach((f) => {
+      const faceDirection = f as FacingDirection;
+      const cubes = this.getCubes(faceDirection);
+      const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
+      indices.forEach((i, index) => {
+        i.face.userData.name = `${faceDirection[0].toUpperCase()}${index}`;
+      });
+    });
+  }
+
   getStatus() {
+    console.log('Current Face Positions:');
     return ['front', 'back', 'right', 'left', 'top', 'bottom'].map((f) => {
       const faceDirection = f as FacingDirection;
       const cubes = this.getCubes(faceDirection);
       const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
-      return indices.map((i) => i.colorIndex);
+      console.log(indices.map((i) => i.face.userData.name));
+      return indices.map((i) => i.face.userData.faceColorIndex);
     });
   }
 

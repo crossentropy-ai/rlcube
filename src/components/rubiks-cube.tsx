@@ -37,12 +37,15 @@ export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(({ cubeRoug
         cubePieceRefs.current.forEach((cubePieceRef) => {
           cubePieceRef.resetPosition();
         });
+        rotationController.initializeFaces();
       });
     },
   }));
 
   useEffect(() => {
-    if (cubeGroupRef.current) rotationController.setCubeGroup(cubeGroupRef.current);
+    if (!cubeGroupRef.current) return;
+    rotationController.setCubeGroup(cubeGroupRef.current);
+    rotationController.initializeFaces();
   }, [cubeGroupRef]);
 
   return (
