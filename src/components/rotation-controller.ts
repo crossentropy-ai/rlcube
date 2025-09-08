@@ -154,14 +154,25 @@ export class RotationController {
   }
 
   getStatus() {
-    console.log('Current Face Positions:');
-    return ['front', 'back', 'right', 'left', 'top', 'bottom'].map((f) => {
+    const rotationsPy: Array<string> = [];
+    const status = ['front', 'back', 'right', 'left', 'top', 'bottom'].map((f) => {
       const faceDirection = f as FacingDirection;
       const cubes = this.getCubes(faceDirection);
       const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
-      console.log(indices.map((i) => i.face.userData.name));
+      const positionNames = indices.map((i) => i.face.userData.name);
+      for (let i = 0; i < positionNames.length; i++) {
+        const positionName = positionNames[i];
+        if (positionName[0] !== f[0].toUpperCase() || positionName[1] !== i.toString()) {
+          rotationsPy.push(
+            `new_state[${f[0].toUpperCase()}, ${i}] = self.state[${positionName[0]}, ${positionName[1]}]`,
+          );
+        }
+      }
       return indices.map((i) => i.face.userData.faceColorIndex);
     });
+    console.log('Python Gym Step Code:');
+    console.log(rotationsPy.join('\n'));
+    return status;
   }
 
   setCubeSpeed(cubeSpeed: number) {
