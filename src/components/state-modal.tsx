@@ -8,7 +8,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Index2Color } from './consts';
 
 export type StateModalRef = {
-  open: (status: Array<Array<number>>) => void;
+  open: (state: Array<Array<number>>) => void;
 };
 
 export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {

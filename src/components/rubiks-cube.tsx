@@ -37,6 +37,14 @@ export const RubiksCube = forwardRef<RubiksCubeRef, RubiksCubeProps>(({ cubeRoug
         cubePieceRefs.current.forEach((cubePieceRef) => {
           cubePieceRef.resetPosition();
         });
+        rotationController.setState([
+          [0, 0, 0, 0],
+          [1, 1, 1, 1],
+          [2, 2, 2, 2],
+          [3, 3, 3, 3],
+          [4, 4, 4, 4],
+          [5, 5, 5, 5],
+        ]);
         rotationController.initializeFaces();
       });
     },

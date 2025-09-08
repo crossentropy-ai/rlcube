@@ -36,8 +36,8 @@ export const UIControls = () => {
   };
 
   const showState = () => {
-    const status = rotationController.getStatus();
-    stateModalRef.current?.open(status);
+    const state = rotationController.getState();
+    stateModalRef.current?.open(state);
   };
 
   const solve = () => {

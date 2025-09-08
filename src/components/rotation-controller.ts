@@ -1,6 +1,6 @@
-import { Group, Mesh, Vector3 } from 'three';
+import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 
-import { FacingDirection, RotationStep } from './consts';
+import { Actions, Color2Index, FacingDirection, RotationStep } from './consts';
 
 export class RotationController {
   private static instance: RotationController;
@@ -102,7 +102,7 @@ export class RotationController {
     if (!RotationController.instance) {
       RotationController.instance = new RotationController();
       if (typeof window !== 'undefined') {
-        // @ts-ignore
+        // @ts-expect-error window is defined
         window.rotationController = RotationController.instance;
       }
     }
@@ -157,9 +157,39 @@ export class RotationController {
     });
   }
 
-  getStatus() {
-    const rotationsPy: Array<string> = [];
+  setState(stateArray: Array<Array<number>>) {
+    const colors = ['', '', '', '', '', ''];
+    Object.entries(Color2Index).forEach(([c, i]) => {
+      colors[i] = c;
+    });
+    ['front', 'back', 'right', 'left', 'up', 'down'].forEach((f, idx1) => {
+      const faceDirection = f as FacingDirection;
+      const cubes = this.getCubes(faceDirection);
+      const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
+      indices.forEach((i, idx2) => {
+        const colorIdx = stateArray[idx1][idx2];
+        i.face.userData.faceColor = colors[colorIdx];
+        i.face.userData.faceColorIndex = colorIdx;
+        const material = i.face.material as MeshStandardMaterial;
+        material.color.set(colors[colorIdx]);
+      });
+    });
+    this.initializeFaces();
+  }
+
+  getState() {
     const status = ['front', 'back', 'right', 'left', 'up', 'down'].map((f) => {
+      const faceDirection = f as FacingDirection;
+      const cubes = this.getCubes(faceDirection);
+      const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
+      return indices.map((i) => i.face.userData.faceColorIndex);
+    });
+    return status;
+  }
+
+  _printStateTransitions() {
+    const rotationsPy: Array<string> = [];
+    ['front', 'back', 'right', 'left', 'up', 'down'].forEach((f) => {
       const faceDirection = f as FacingDirection;
       const cubes = this.getCubes(faceDirection);
       const indices = cubes.map((cube) => this.getCubeFaceData(cube, faceDirection)).sort((a, b) => a.rank - b.rank);
@@ -172,15 +202,16 @@ export class RotationController {
           );
         }
       }
-      return indices.map((i) => i.face.userData.faceColorIndex);
     });
-    console.log('Python Gym Step Code:');
     console.log(rotationsPy.join('\n'));
-    return status;
   }
 
   setCubeSpeed(cubeSpeed: number) {
     this.cubeSpeed = cubeSpeed;
+  }
+
+  addRotationStepCode(...codes: Array<number>) {
+    this.addRotationStep(...codes.map((code) => Actions[code]));
   }
 
   addRotationStep(...step: Array<RotationStep>) {
