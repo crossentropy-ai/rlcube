@@ -1,7 +1,9 @@
-from rlcube.cube2 import train
+from rlcube.envs.cube2 import Cube2
 
 def main():
-    train()
+    env = Cube2()
+    obs, _ = env.reset()
+    print(obs)
 
 
 if __name__ == "__main__":
