@@ -6,6 +6,7 @@ import { useDisclosure } from '@heroui/use-disclosure';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { Index2Color } from './consts';
+import { rotationController } from './rotation-controller';
 
 export type StateModalRef = {
   open: (state: Array<Array<number>>) => void;
@@ -24,6 +25,26 @@ export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
 
   const copy = () => {
     navigator.clipboard.writeText(JSON.stringify(state));
+  };
+
+  const solve = async () => {
+    try {
+      const response = await fetch('/api/solve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ state }),
+      });
+      if (!response.ok) {
+        throw new Error('Server error', { cause: response });
+      }
+      const { steps } = await response.json();
+      rotationController.addRotationStepCode(...steps);
+    } catch (err) {
+      alert('An error occurred. Check the console for details.');
+      console.error(err);
+    }
   };
 
   return (
@@ -70,8 +91,11 @@ export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
               <Button color="danger" variant="light" size="sm" onPress={onClose}>
                 Close
               </Button>
-              <Button color="primary" size="sm" onPress={copy}>
+              <Button color="primary" variant="light" size="sm" onPress={copy}>
                 Copy
+              </Button>
+              <Button color="success" size="sm" onPress={solve}>
+                Solve
               </Button>
             </ModalFooter>
           </>

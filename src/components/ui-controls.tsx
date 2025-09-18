@@ -40,10 +40,6 @@ export const UIControls = () => {
     stateModalRef.current?.open(state);
   };
 
-  const solve = () => {
-    alert('Working on it!');
-  };
-
   const train = () => {
     alert('Working on it!');
   };
@@ -105,11 +101,7 @@ export const UIControls = () => {
                   <Button onPress={reset}>Reset</Button>
                 </ButtonGroup>
 
-                <Button size="sm" variant="light" onPress={showState}>
-                  Show State
-                </Button>
-
-                <Button size="sm" className="ms-auto" color="success" onPress={solve}>
+                <Button size="sm" className="ms-auto" color="success" onPress={showState}>
                   Solve
                 </Button>
               </div>
