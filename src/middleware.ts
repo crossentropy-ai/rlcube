@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { env } from 'process';
 
-const API_HOST = env.NEXT_PUBLIC_API_HOST || 'http://localhost:8000';
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:8000';
 
 export const config = {
   matcher: '/api/solve',
