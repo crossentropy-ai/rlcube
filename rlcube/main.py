@@ -2,6 +2,8 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi import HTTPException
+from envs.cube2 import Cube2
+import numpy as np
 
 app = FastAPI()
 
@@ -20,4 +22,12 @@ def solve(body: StateArgs):
     ):
         raise HTTPException(status_code=400, detail="state must be a 6x4 matrix")
 
-    return {"steps": [1, 2, 1, 1]}
+    env = Cube2()
+    env.reset(state=np.array(state, dtype=np.int8))
+
+    steps = []
+    for _ in range(10):
+        action = env.action_space.sample()
+        steps.append(action.item())
+
+    return {"steps": steps}

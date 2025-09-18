@@ -19,15 +19,19 @@ class Cube2(gym.Env):
         self.state = np.zeros((6, 4))
         self.step_count = 0
 
-    def reset(self, seed=None, options=None):
+    def reset(self, seed=None, options=None, state: np.ndarray = None):
         super().reset(seed=seed, options=options)
-        self.state = np.zeros((6, 4))
-        self.state[0] = np.ones(4) * F
-        self.state[1] = np.ones(4) * B
-        self.state[2] = np.ones(4) * R
-        self.state[3] = np.ones(4) * L
-        self.state[4] = np.ones(4) * U
-        self.state[5] = np.ones(4) * D
+        if state is None:
+            self.state = np.zeros((6, 4), dtype=np.int8)
+            self.state[0] = np.ones(4, dtype=np.int8) * F
+            self.state[1] = np.ones(4, dtype=np.int8) * B
+            self.state[2] = np.ones(4, dtype=np.int8) * R
+            self.state[3] = np.ones(4, dtype=np.int8) * L
+            self.state[4] = np.ones(4, dtype=np.int8) * U
+            self.state[5] = np.ones(4, dtype=np.int8) * D
+        else:
+            assert state.shape == (6, 4) and state.dtype == np.int8
+            self.state = state
         self.step_count = 0
         return self._get_obs(), {}
 
