@@ -10,6 +10,6 @@ RUN bun install && cd rlcube && uv sync --frozen --no-dev --no-cache
 COPY . .
 
 RUN bun run build
-EXPOSE 3000
+EXPOSE 7860
 
 CMD ["bun", "run", "start"]

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "concurrently \"next start\" \"cd rlcube && uv run fastapi run main.py --host 127.0.0.1\"",
+    "start": "concurrently \"next start -p 7860\" \"cd rlcube && uv run fastapi run main.py --host 127.0.0.1\"",
     "lint": "eslint && cd rlcube && uvx ruff check",
     "format": "prettier --write . && cd rlcube && uvx ruff format"
   },
