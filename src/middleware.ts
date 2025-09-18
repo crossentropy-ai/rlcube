@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:8000';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000';
 
 export const config = {
   matcher: '/api/solve',
@@ -9,7 +9,7 @@ export const config = {
 export function middleware(req: Request) {
   const url = new URL(req.url);
   if (url.pathname === '/api/solve') {
-    return NextResponse.rewrite(`${API_HOST}/api/solve`);
+    return NextResponse.rewrite(`${API_BASE_URL}/solve`);
   }
   return NextResponse.next();
 }
