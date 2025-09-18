@@ -14,7 +14,7 @@ export type StateModalRef = {
 
 export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
   const [state, setState] = useState<Array<Array<number>>>([]);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
   useImperativeHandle(ref, () => ({
     open: (state: Array<Array<number>>) => {
@@ -41,6 +41,7 @@ export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
       }
       const { steps } = await response.json();
       rotationController.addRotationStepCode(...steps);
+      onClose();
     } catch (err) {
       alert('An error occurred. Check the console for details.');
       console.error(err);
