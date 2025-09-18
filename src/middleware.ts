@@ -9,7 +9,7 @@ export const config = {
 export function middleware(req: Request) {
   const url = new URL(req.url);
   if (url.pathname === '/api/solve') {
-    return NextResponse.rewrite(`${API_HOST}/solve`);
+    return NextResponse.rewrite(`${API_HOST}/api/solve`);
   }
   return NextResponse.next();
 }
