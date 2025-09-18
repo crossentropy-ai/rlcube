@@ -2,14 +2,15 @@ FROM ghcr.io/crossentropy-ai/runtime:latest
 
 WORKDIR /app
 
-# Install dependencies
-COPY ./package.json ./bun.lock ./
-COPY ./rlcube/pyproject.toml ./rlcube/uv.lock ./rlcube/
-RUN bun install && cd rlcube && uv sync --frozen --no-dev --no-cache
-
 COPY . .
 
+USER root
+RUN chown -R ubuntu:ubuntu /app
+
+USER ubuntu
+RUN bun install && cd rlcube && uv sync --frozen --no-dev --no-cache
 RUN bun run build
+
 EXPOSE 7860
 
 CMD ["bun", "run", "start"]
