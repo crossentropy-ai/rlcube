@@ -1,12 +1,17 @@
-from rlcube.models.dataset import Cube2Dataset, create_dataset
+from rlcube.models.dataset import Cube2Dataset
 from rlcube.models.models import Reward, DNN
-from rlcube.envs.cube2 import Cube2
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-import numpy as np
 import torch
 
-torch.set_default_device("mps")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+elif torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
+
+print(f"Using device: {device}")
 
 
 def train(epochs: int = 100):
@@ -15,9 +20,9 @@ def train(epochs: int = 100):
     print("Number of epochs:", epochs)
     print()
 
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
-    reward = Reward()
-    net = DNN()
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    reward = Reward().to(device)
+    net = DNN().to(device)
     optimizer = torch.optim.RMSprop(net.parameters(), lr=0.0001)
     value_loss_fn = torch.nn.MSELoss()
     policy_loss_fn = torch.nn.CrossEntropyLoss()
@@ -26,6 +31,7 @@ def train(epochs: int = 100):
         epoch_loss = 0
         for batch in tqdm(dataloader):
             states, neighbors, D = batch
+            states, neighbors, D = states.to(device), neighbors.to(device), D.to(device)
 
             net_out = net(states)
             values = net_out["value"]
