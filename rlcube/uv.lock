@@ -1536,6 +1536,7 @@ dependencies = [
     { name = "numpy" },
     { name = "tensordict" },
     { name = "torch" },
+    { name = "tqdm" },
 ]
 
 [package.metadata]
@@ -1547,6 +1548,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.3.2" },
     { name = "tensordict", specifier = ">=0.10.0" },
     { name = "torch", specifier = ">=2.8.0" },
+    { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
 [[package]]
