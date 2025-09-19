@@ -73,6 +73,12 @@ class DNN(nn.Module):
         policy = self.fc_policy(out)
         return TensorDict({"value": value, "policy": policy}, batch_size=batch_size)
 
+    def save(self, filepath: str):
+        torch.save(self.state_dict(), filepath)
+
+    def load(self, filepath: str):
+        self.load_state_dict(torch.load(filepath))
+
 
 if __name__ == "__main__":
     print("Testing RewardNet")

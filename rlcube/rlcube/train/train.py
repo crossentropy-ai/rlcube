@@ -23,13 +23,17 @@ def train(epochs: int = 100):
     print("Number of epochs:", epochs)
     print()
 
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=1024, shuffle=True)
     reward = Reward().to(device)
-    net = DNN().to(device)
+    net = DNN()
+    if os.path.exists("models/model_best.pth"):
+        net.load("models/model_best.pth")
+    net = net.to(device)
     optimizer = torch.optim.RMSprop(net.parameters(), lr=0.0001)
     value_loss_fn = torch.nn.MSELoss()
     policy_loss_fn = torch.nn.CrossEntropyLoss()
 
+    best_loss = float("inf")
     for epoch in range(epochs):
         epoch_loss = 0
         print(f"Training Epoch {epoch}")
@@ -59,7 +63,12 @@ def train(epochs: int = 100):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-        print(f"Epoch {epoch} loss: {epoch_loss / len(dataloader)}")
+        epoch_loss /= len(dataloader)
+        if epoch_loss < best_loss:
+            best_loss = epoch_loss
+            print(f"Saving model at epoch {epoch}")
+            net.save("models/model_best.pth")
+        print(f"Epoch {epoch} loss: {epoch_loss}")
 
 
 if __name__ == "__main__":
