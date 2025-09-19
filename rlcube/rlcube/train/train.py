@@ -1,8 +1,9 @@
-from rlcube.models.dataset import Cube2Dataset
+from rlcube.models.dataset import Cube2Dataset, create_dataset
 from rlcube.models.models import Reward, DNN
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 import torch
+import os
 
 if torch.backends.mps.is_available():
     device = torch.device("mps")
@@ -15,6 +16,8 @@ print(f"Using device: {device}")
 
 
 def train(epochs: int = 100):
+    if not os.path.exists("dataset.pt"):
+        create_dataset(num_envs=10000, num_steps=20, filepath="dataset.pt")
     dataset = Cube2Dataset("dataset.pt")
     print("Number of samples:", len(dataset))
     print("Number of epochs:", epochs)
