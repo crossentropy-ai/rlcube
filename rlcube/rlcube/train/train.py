@@ -29,9 +29,9 @@ def train(epochs: int = 100):
     if os.path.exists("models/model_best.pth"):
         net.load("models/model_best.pth")
     net = net.to(device)
-    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.0001)
-    value_loss_fn = torch.nn.MSELoss()
-    policy_loss_fn = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.000001)
+    value_loss_fn = torch.nn.MSELoss(reduction="none")
+    policy_loss_fn = torch.nn.CrossEntropyLoss(reduction="none")
 
     best_loss = float("inf")
     for epoch in range(epochs):
@@ -56,9 +56,9 @@ def train(epochs: int = 100):
             target_values, indices = (neighbors_values + neighbors_rewards).max(dim=1)
             indices = indices.reshape(-1)
 
-            loss_v = value_loss_fn(values, target_values)
-            loss_p = policy_loss_fn(policies, indices)
-            loss = loss_v + loss_p
+            loss_v = value_loss_fn(values, target_values).reshape(-1) / D.reshape(-1).detach()
+            loss_p = policy_loss_fn(policies, indices).reshape(-1) / D.reshape(-1).detach()
+            loss = (loss_v + loss_p).mean()
             epoch_loss += loss.item()
             optimizer.zero_grad()
             loss.backward()
