@@ -220,3 +220,5 @@ __marimo__/
 
 # Dataset
 dataset.pt
+dataset_*.pt
+!dataset_final.pt

@@ -5,7 +5,9 @@ import torch
 from tqdm import tqdm
 
 
-def create_dataset(num_envs: int = 10000, num_steps: int = 50):
+def create_dataset(
+    num_envs: int = 10000, num_steps: int = 50, filepath: str = "dataset.pt"
+):
     states = []
     neighbors = []
     D = []
@@ -22,11 +24,11 @@ def create_dataset(num_envs: int = 10000, num_steps: int = 50):
     neighbors = np.array(neighbors)
     D = np.array(D)
     dataseet = {
-        "states": torch.tensor(states),
-        "neighbors": torch.tensor(neighbors),
-        "D": torch.tensor(D),
+        "states": torch.tensor(states, dtype=torch.float32),
+        "neighbors": torch.tensor(neighbors, dtype=torch.float32),
+        "D": torch.tensor(D, dtype=torch.float32),
     }
-    torch.save(dataseet, "dataset.pt")
+    torch.save(dataseet, filepath)
 
 
 class Cube2Dataset(Dataset):
