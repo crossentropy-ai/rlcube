@@ -2,6 +2,27 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from tensordict import TensorDict
+from rlcube.envs.cube2 import Cube2
+import numpy as np
+
+
+class RewardNet(nn.Module):
+    def __init__(self):
+        super(RewardNet, self).__init__()
+
+    def forward(self, batch_obs):
+        one_indices = batch_obs.argmax(dim=2)
+        # (batch, 24) -> (batch, 6, 4), 6 faces, 4 stickers
+        face_indices = one_indices.view(batch_obs.shape[0], 6, 4)
+        # (batch, 6), For each face, check if all stickers have the same index, i.e. compare with the first sticker
+        face_solved = (face_indices == face_indices[:, :, 0:1]).all(dim=2)  #
+        # (batch,), For each batch, check if all faces are solved
+        solved = face_solved.all(dim=1)
+        return torch.where(
+            solved,
+            torch.tensor(1, device=batch_obs.device, dtype=batch_obs.dtype),
+            torch.tensor(-1, device=batch_obs.device, dtype=batch_obs.dtype),
+        )
 
 
 class ResidualBlock(nn.Module):
@@ -54,10 +75,21 @@ class DNN(nn.Module):
 
 
 if __name__ == "__main__":
+    print("Testing RewardNet")
+    env = Cube2()
+    obs, _ = env.reset()
+    obs1, _, _, _, _ = env.step(1)
+    obs2, _, _, _, _ = env.step(2)
+    x = torch.tensor(np.array([obs, obs1, obs2]))
+    print("Input shape:", x.shape)
+    print("Output:", RewardNet()(x))
+    print()
+
     print("Testing ResidualBlock, input_dim=24, hidden_dim=128")
     x = torch.randn(4, 24, 6)
     print("Input shape:", x.shape)
     print("Output shape:", ResidualBlock(6, 128)(x).shape)
+    print()
 
     print("Testing Cube2VNetwork, input_dim=24, num_residual_blocks=4")
     x = torch.randn(4, 24, 6)
