@@ -1,4 +1,3 @@
-import lightning as L
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
@@ -20,7 +19,7 @@ class ResidualBlock(nn.Module):
         return out
 
 
-class Cube2VNetwork(L.LightningModule):
+class DNN(nn.Module):
     def __init__(self, hidden_dim=512, num_residual_blocks=4):
         super().__init__()
         input_dim = 24 * 6
@@ -53,7 +52,7 @@ if __name__ == "__main__":
 
     print("Testing Cube2VNetwork, input_dim=24, num_residual_blocks=4")
     x = torch.randn(4, 24, 6)
-    net = Cube2VNetwork()
+    net = DNN()
     print("Input shape:", x.shape)
     print("Output shape:", net(x).shape)
     print("Number of parameters:", sum(p.numel() for p in net.parameters()))
