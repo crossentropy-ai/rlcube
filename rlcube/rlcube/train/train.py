@@ -1,18 +1,6 @@
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-
-from rlcube.envs.cube2 import Cube2
-
-
-def generate_train_data(num_envs: int = 1000, num_steps: int = 20):
-    for _ in range(num_envs):
-        env = Cube2()
-        obs, _ = env.reset()
-        
-        print(obs)
-        break
+from rlcube.models.dataset import Cube2Dataset
 
 
 if __name__ == "__main__":
-    generate_train_data()
+    dataset = Cube2Dataset(num_envs=10, num_steps=20)
+    print(dataset[10])

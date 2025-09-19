@@ -16,7 +16,7 @@ class Cube2(gym.Env):
         self.observation_space = gym.spaces.Box(
             low=0, high=1, shape=(24, 6), dtype=np.int8
         )
-        self.state = np.zeros((6, 4))
+        self.state = np.zeros((6, 4), dtype=np.int8)
         self.step_count = 0
 
     def reset(self, seed=None, options=None, state: np.ndarray = None):
@@ -215,6 +215,15 @@ class Cube2(gym.Env):
             self.step_count >= 100,
             {},
         )
+
+    def neighbors(self):
+        neighbors = []
+        for i in range(12):
+            env = Cube2()
+            env.reset(state=self.state)
+            obs, _, _, _, _ = env.step(i)
+            neighbors.append(obs)
+        return np.array(neighbors)
 
     def _get_obs(self):
         one_hots = []

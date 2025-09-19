@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
+from tensordict import TensorDict
 
 
 class ResidualBlock(nn.Module):
@@ -32,7 +33,14 @@ class DNN(nn.Module):
             ]
         )
 
-        self.fc_out = nn.Linear(hidden_dim, 1)
+        # Value head
+        self.fc_value = nn.Sequential(
+            nn.Linear(hidden_dim, 64), nn.ReLU(), nn.Linear(64, 1)
+        )
+        # Policy head
+        self.fc_policy = nn.Sequential(
+            nn.Linear(hidden_dim, 64), nn.ReLU(), nn.Linear(64, 12)
+        )
 
     def forward(self, x):
         batch_size = x.size(0)
@@ -40,8 +48,9 @@ class DNN(nn.Module):
         out = F.relu(self.fc_in(x))
         for block in self.residual_blocks:
             out = block(out)
-        out = self.fc_out(out)
-        return out
+        value = self.fc_value(out)
+        policy = self.fc_policy(out)
+        return TensorDict({"value": value, "policy": policy}, batch_size=batch_size)
 
 
 if __name__ == "__main__":
@@ -52,7 +61,9 @@ if __name__ == "__main__":
 
     print("Testing Cube2VNetwork, input_dim=24, num_residual_blocks=4")
     x = torch.randn(4, 24, 6)
-    net = DNN()
     print("Input shape:", x.shape)
-    print("Output shape:", net(x).shape)
+    net = DNN()
+    y = net(x)
+    print("Output value shape:", y["value"].shape)
+    print("Output policy shape:", y["policy"].shape)
     print("Number of parameters:", sum(p.numel() for p in net.parameters()))
