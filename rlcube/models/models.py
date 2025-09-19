@@ -5,27 +5,55 @@ import torch
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, input_dim, hidden_dim):
-        super(ResidualBlock, self).__init__()
-        self.bn1 = nn.BatchNorm1d(input_dim)
-        self.fc1 = nn.Linear(input_dim, hidden_dim)
-        self.bn2 = nn.BatchNorm1d(hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, input_dim)
+    def __init__(self, dim, hidden_dim):
+        super().__init__()
+        self.ln1 = nn.LayerNorm(dim)
+        self.fc1 = nn.Linear(dim, hidden_dim)
+        self.ln2 = nn.LayerNorm(hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, dim)
 
     def forward(self, x):
         residual = x
-        out = self.bn1(x)
-        out = F.relu(out)
-        out = self.fc1(out)
-        out = self.bn2(out)
-        out = F.relu(out)
-        out = self.fc2(out)
+        out = self.fc1(F.relu(self.ln1(x)))
+        out = self.fc2(F.relu(self.ln2(out)))
         out = out + residual
+        return out
+
+
+class Cube2VNetwork(L.LightningModule):
+    def __init__(self, hidden_dim=512, num_residual_blocks=4):
+        super().__init__()
+        input_dim = 24 * 6
+        self.fc_in = nn.Linear(input_dim, hidden_dim)
+
+        self.residual_blocks = nn.ModuleList(
+            [
+                ResidualBlock(hidden_dim, hidden_dim * 2)
+                for _ in range(num_residual_blocks)
+            ]
+        )
+
+        self.fc_out = nn.Linear(hidden_dim, 1)
+
+    def forward(self, x):
+        batch_size = x.size(0)
+        x = x.view(batch_size, -1)
+        out = F.relu(self.fc_in(x))
+        for block in self.residual_blocks:
+            out = block(out)
+        out = self.fc_out(out)
         return out
 
 
 if __name__ == "__main__":
     print("Testing ResidualBlock, input_dim=24, hidden_dim=128")
-    x = torch.randn(4, 24)
+    x = torch.randn(4, 24, 6)
     print("Input shape:", x.shape)
-    print("Output shape:", ResidualBlock(24, 128)(x).shape)
+    print("Output shape:", ResidualBlock(6, 128)(x).shape)
+
+    print("Testing Cube2VNetwork, input_dim=24, num_residual_blocks=4")
+    x = torch.randn(4, 24, 6)
+    net = Cube2VNetwork()
+    print("Input shape:", x.shape)
+    print("Output shape:", net(x).shape)
+    print("Number of parameters:", sum(p.numel() for p in net.parameters()))
