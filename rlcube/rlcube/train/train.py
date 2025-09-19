@@ -6,10 +6,11 @@ from torch.utils.data import DataLoader
 import numpy as np
 import torch
 
+torch.set_default_device("mps")
+
 
 def train(epochs: int = 100):
-    # create_dataset(num_envs=10, num_steps=10, filepath="dataset_mini.pt")
-    dataset = Cube2Dataset("dataset_mini.pt")
+    dataset = Cube2Dataset("dataset.pt")
     print("Number of samples:", len(dataset))
     print("Number of epochs:", epochs)
     print()
@@ -23,7 +24,7 @@ def train(epochs: int = 100):
 
     for _ in range(epochs):
         epoch_loss = 0
-        for batch in dataloader:
+        for batch in tqdm(dataloader):
             states, neighbors, D = batch
 
             net_out = net(states)
