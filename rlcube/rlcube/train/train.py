@@ -27,8 +27,9 @@ def train(epochs: int = 100):
     value_loss_fn = torch.nn.MSELoss()
     policy_loss_fn = torch.nn.CrossEntropyLoss()
 
-    for _ in range(epochs):
+    for epoch in range(epochs):
         epoch_loss = 0
+        print(f"Training Epoch {epoch}")
         for batch in tqdm(dataloader):
             states, neighbors, D = batch
             states, neighbors, D = states.to(device), neighbors.to(device), D.to(device)
@@ -55,7 +56,7 @@ def train(epochs: int = 100):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-        print(f"Epoch {_} loss: {epoch_loss / len(dataloader)}")
+        print(f"Epoch {epoch} loss: {epoch_loss / len(dataloader)}")
 
 
 if __name__ == "__main__":

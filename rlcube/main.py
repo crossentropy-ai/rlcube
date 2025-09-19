@@ -2,7 +2,7 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi import HTTPException
-from envs.cube2 import Cube2
+from rlcube.envs.cube2 import Cube2
 import numpy as np
 
 app = FastAPI()
