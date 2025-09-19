@@ -6,9 +6,9 @@ from rlcube.envs.cube2 import Cube2
 import numpy as np
 
 
-class RewardNet(nn.Module):
+class Reward(nn.Module):
     def __init__(self):
-        super(RewardNet, self).__init__()
+        super(Reward, self).__init__()
 
     def forward(self, batch_obs):
         one_indices = batch_obs.argmax(dim=2)
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     obs2, _, _, _, _ = env.step(2)
     x = torch.tensor(np.array([obs, obs1, obs2]))
     print("Input shape:", x.shape)
-    print("Output:", RewardNet()(x))
+    print("Output:", Reward()(x))
     print()
 
     print("Testing ResidualBlock, input_dim=24, hidden_dim=128")
