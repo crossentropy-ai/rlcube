@@ -252,3 +252,6 @@ class Cube2Env(gym.Env):
             if np.mean(self.state[i]) != self.state[i][0]:
                 return False
         return True
+
+    def print_js_code(self):
+        print(f"rotationController.setState({self.state.tolist()});")
