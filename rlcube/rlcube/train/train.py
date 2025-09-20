@@ -17,7 +17,7 @@ print(f"Using device: {device}")
 
 def train(epochs: int = 100):
     if not os.path.exists("dataset.pt"):
-        create_dataset(num_envs=10000, num_steps=20, filepath="dataset.pt")
+        create_dataset(num_envs=1000, num_steps=20, filepath="dataset.pt")
     dataset = Cube2Dataset("dataset.pt")
     print("Number of samples:", len(dataset))
     print("Number of epochs:", epochs)
@@ -29,7 +29,7 @@ def train(epochs: int = 100):
     if os.path.exists("models/model_best.pth"):
         net.load("models/model_best.pth")
     net = net.to(device)
-    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.000001)
+    optimizer = torch.optim.Adam(net.parameters(), lr=0.000001)
     value_loss_fn = torch.nn.MSELoss(reduction="none")
     policy_loss_fn = torch.nn.CrossEntropyLoss(reduction="none")
 
