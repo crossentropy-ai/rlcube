@@ -9,15 +9,27 @@ U = 4
 D = 5
 
 
-class Cube2(gym.Env):
+class Cube2Env(gym.Env):
     def __init__(self):
-        super().__init__()
+        super(Cube2Env, self).__init__()
         self.action_space = gym.spaces.Discrete(12)
         self.observation_space = gym.spaces.Box(
             low=0, high=1, shape=(24, 6), dtype=np.int8
         )
         self.state = np.zeros((6, 4), dtype=np.int8)
-        self.step_count = 0
+        self.reset()
+
+    def from_obs(obs):
+        state = np.zeros((6, 4), dtype=np.int8)
+        obs = np.asarray(obs)
+        assert obs.shape == (24, 6)
+        for i in range(6):
+            for j in range(4):
+                idx = i * 4 + j
+                state[i, j] = np.argmax(obs[idx])
+        env = Cube2Env()
+        env.reset(state=state)
+        return env
 
     def reset(self, seed=None, options=None, state: np.ndarray = None):
         super().reset(seed=seed, options=options)
@@ -33,7 +45,7 @@ class Cube2(gym.Env):
             assert state.shape == (6, 4) and state.dtype == np.int8
             self.state = state
         self.step_count = 0
-        return self._get_obs(), {}
+        return self.obs(), {}
 
     def step(self, action):
         self.step_count += 1
@@ -209,23 +221,23 @@ class Cube2(gym.Env):
             new_state[D, 3] = self.state[D, 2]
         self.state = new_state
         return (
-            self._get_obs(),
-            1 if self._is_solved() else -1,
-            self._is_solved(),
+            self.obs(),
+            1 if self.is_solved() else -1,
+            self.is_solved(),
             self.step_count >= 100,
             {},
         )
 
-    def neighbors(self):
+    def adjacent_obs(self):
         neighbors = []
         for i in range(12):
-            env = Cube2()
+            env = Cube2Env()
             env.reset(state=self.state)
             obs, _, _, _, _ = env.step(i)
             neighbors.append(obs)
         return np.array(neighbors)
 
-    def _get_obs(self):
+    def obs(self):
         one_hots = []
         for i in range(6):
             for j in range(4):
@@ -235,7 +247,7 @@ class Cube2(gym.Env):
                 one_hots.append(zeros)
         return np.array(one_hots)
 
-    def _is_solved(self):
+    def is_solved(self):
         for i in range(6):
             if np.mean(self.state[i]) != self.state[i][0]:
                 return False

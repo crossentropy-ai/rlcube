@@ -56,8 +56,13 @@ def train(epochs: int = 100):
             target_values, indices = (neighbors_values + neighbors_rewards).max(dim=1)
             indices = indices.reshape(-1)
 
-            loss_v = value_loss_fn(values, target_values).reshape(-1) / D.reshape(-1).detach()
-            loss_p = policy_loss_fn(policies, indices).reshape(-1) / D.reshape(-1).detach()
+            loss_v = (
+                value_loss_fn(values, target_values).reshape(-1)
+                / D.reshape(-1).detach()
+            )
+            loss_p = (
+                policy_loss_fn(policies, indices).reshape(-1) / D.reshape(-1).detach()
+            )
             loss = (loss_v + loss_p).mean()
             epoch_loss += loss.item()
             optimizer.zero_grad()
