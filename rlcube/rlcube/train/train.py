@@ -17,7 +17,7 @@ print(f"Using device: {device}")
 
 def train(epochs: int = 100):
     if not os.path.exists("dataset.pt"):
-        create_dataset(num_envs=1000, num_steps=20, filepath="dataset.pt")
+        create_dataset(num_envs=10000, num_steps=30, filepath="dataset.pt")
     dataset = Cube2Dataset("dataset.pt")
     print("Number of samples:", len(dataset))
     print("Number of epochs:", epochs)
