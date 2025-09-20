@@ -29,7 +29,7 @@ def train(epochs: int = 100):
     if os.path.exists("models/model_best.pth"):
         net.load("models/model_best.pth")
     net = net.to(device)
-    optimizer = torch.optim.Adam(net.parameters(), lr=0.000001)
+    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.00001)
     value_loss_fn = torch.nn.MSELoss(reduction="none")
     policy_loss_fn = torch.nn.CrossEntropyLoss(reduction="none")
 
@@ -43,25 +43,23 @@ def train(epochs: int = 100):
 
             values, policies = net(states)
 
-            batch_size = neighbors.shape[0]
-            neighbors_reshaped = neighbors.view(-1, 24, 6)
-            neighbors_values, _ = net(neighbors_reshaped)
-            rewards_out = reward(neighbors_reshaped)
+            with torch.no_grad():
+                batch_size = neighbors.shape[0]
+                neighbors_reshaped = neighbors.view(-1, 24, 6)
+                values_out, _ = net(neighbors_reshaped)
+                rewards_out = reward(neighbors_reshaped)
 
-            neighbors_values = neighbors_values.view(batch_size, 12, -1)
-            neighbors_rewards = rewards_out.view(batch_size, 12, -1)
+                nvalues = values_out.view(batch_size, 12, -1)
+                nrewards = rewards_out.view(batch_size, 12, -1)
 
-            target_values, indices = (neighbors_values + neighbors_rewards).max(dim=1)
-            indices = indices.reshape(-1)
+                target_values, indices = (nvalues + nrewards).max(dim=1)
+                target_values = target_values.detach()
+                indices = indices.reshape(-1)
+                weights = 1 / D.reshape(-1).detach()
 
-            loss_v = (
-                value_loss_fn(values, target_values).reshape(-1)
-                / D.reshape(-1).detach()
-            )
-            loss_p = (
-                policy_loss_fn(policies, indices).reshape(-1) / D.reshape(-1).detach()
-            )
-            loss = (loss_v + loss_p).mean()
+            loss_v = value_loss_fn(values, target_values).reshape(-1) * weights
+            loss_p = policy_loss_fn(policies, indices).reshape(-1) * weights
+            loss = (0.2 * loss_v + 0.8 * loss_p).mean()
             epoch_loss += loss.item()
             optimizer.zero_grad()
             loss.backward()
