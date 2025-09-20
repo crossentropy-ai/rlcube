@@ -14,9 +14,9 @@ class Node:
         self.obs = torch.tensor(obs, dtype=torch.float32)
         self.parent = parent
 
-        out = net(self.obs.unsqueeze(0))
-        value = out["value"].detach()
-        policy = torch.softmax(out["policy"].detach(), dim=1)
+        value, policy = net(self.obs.unsqueeze(0))
+        value = value.detach()
+        policy = torch.softmax(policy.detach(), dim=1)
 
         self.is_solved = Cube2Env.from_obs(obs).is_solved()
         self.value = torch.tensor(1) if self.is_solved else value.view(-1)
@@ -55,6 +55,7 @@ class MonteCarloTree:
         self.root = Node(obs)
         self.nodes = [self.root]
         self.is_solved = False
+        self.solved_path = []
         self._build()
 
     def _build(self):
@@ -80,6 +81,8 @@ class MonteCarloTree:
                 node.children[i] = child
                 self.nodes.append(child)
                 self.is_solved = self.is_solved or child.is_solved
+                if child.is_solved:
+                    self.solved_path = path + [(node, i)]
 
             # Backup
             for parent, action in reversed(path):

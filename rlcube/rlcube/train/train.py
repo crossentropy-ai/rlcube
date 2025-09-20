@@ -29,7 +29,7 @@ def train(epochs: int = 100):
     if os.path.exists("models/model_best.pth"):
         net.load("models/model_best.pth")
     net = net.to(device)
-    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.00001)
+    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.000001)
     value_loss_fn = torch.nn.MSELoss(reduction="none")
     policy_loss_fn = torch.nn.CrossEntropyLoss(reduction="none")
 
@@ -42,6 +42,8 @@ def train(epochs: int = 100):
             states, neighbors, D = states.to(device), neighbors.to(device), D.to(device)
 
             values, policies = net(states)
+            rewards = reward(states)
+            masks = torch.where(rewards > 0, 0, 1).unsqueeze(1)
 
             with torch.no_grad():
                 batch_size = neighbors.shape[0]
@@ -53,7 +55,9 @@ def train(epochs: int = 100):
                 nrewards = rewards_out.view(batch_size, 12, -1)
 
                 target_values, indices = (nvalues + nrewards).max(dim=1)
+                target_values = target_values * masks
                 target_values = target_values.detach()
+
                 indices = indices.reshape(-1)
                 weights = 1 / D.reshape(-1).detach()
 

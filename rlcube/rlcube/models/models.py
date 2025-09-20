@@ -79,6 +79,31 @@ class DNN(nn.Module):
         self.load_state_dict(torch.load(filepath))
 
 
+class DNN2(nn.Module):
+    def __init__(self):
+        super(DNN2, self).__init__()
+
+        self.body = nn.Sequential(
+            nn.Linear(24 * 6, 4096), nn.ELU(), nn.Linear(4096, 2048), nn.ELU()
+        )
+        self.policy = nn.Sequential(nn.Linear(2048, 512), nn.ELU(), nn.Linear(512, 12))
+        self.value = nn.Sequential(nn.Linear(2048, 512), nn.ELU(), nn.Linear(512, 1))
+
+    def forward(self, x):
+        batch_size = x.size(0)
+        x = x.view(batch_size, -1)
+        x = self.body(x)
+        value = self.value(x)
+        policy = self.policy(x)
+        return value, policy
+
+    def save(self, filepath: str):
+        torch.save(self.state_dict(), filepath)
+
+    def load(self, filepath: str):
+        self.load_state_dict(torch.load(filepath))
+
+
 if __name__ == "__main__":
     print("Testing RewardNet")
     env = Cube2Env()
