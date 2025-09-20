@@ -41,16 +41,14 @@ def train(epochs: int = 100):
             states, neighbors, D = batch
             states, neighbors, D = states.to(device), neighbors.to(device), D.to(device)
 
-            net_out = net(states)
-            values = net_out["value"]
-            policies = net_out["policy"]
+            values, policies = net(states)
 
             batch_size = neighbors.shape[0]
             neighbors_reshaped = neighbors.view(-1, 24, 6)
-            neighbors_out = net(neighbors_reshaped)
+            neighbors_values, _ = net(neighbors_reshaped)
             rewards_out = reward(neighbors_reshaped)
 
-            neighbors_values = neighbors_out["value"].view(batch_size, 12, -1)
+            neighbors_values = neighbors_values.view(batch_size, 12, -1)
             neighbors_rewards = rewards_out.view(batch_size, 12, -1)
 
             target_values, indices = (neighbors_values + neighbors_rewards).max(dim=1)

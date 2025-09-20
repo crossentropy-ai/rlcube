@@ -1,7 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-from tensordict import TensorDict
 from rlcube.envs.cube2 import Cube2Env
 import numpy as np
 
@@ -71,7 +70,7 @@ class DNN(nn.Module):
             out = block(out)
         value = self.fc_value(out)
         policy = self.fc_policy(out)
-        return TensorDict({"value": value, "policy": policy}, batch_size=batch_size)
+        return value, policy
 
     def save(self, filepath: str):
         torch.save(self.state_dict(), filepath)
