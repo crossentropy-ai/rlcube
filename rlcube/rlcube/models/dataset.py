@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-from rlcube.envs.cube2 import Cube2
+from rlcube.envs import Cube2Env
 import numpy as np
 import torch
 from tqdm import tqdm
@@ -12,13 +12,13 @@ def create_dataset(
     neighbors = []
     D = []
     for _ in tqdm(range(num_envs)):
-        env = Cube2()
+        env = Cube2Env()
         obs, _ = env.reset()
         for _ in range(num_steps):
             action = env.action_space.sample()
             obs, _, _, _, _ = env.step(action)
             states.append(obs)
-            neighbors.append(env.neighbors())
+            neighbors.append(env.adjacent_obs())
             D.append(env.step_count)
     states = np.array(states)
     neighbors = np.array(neighbors)

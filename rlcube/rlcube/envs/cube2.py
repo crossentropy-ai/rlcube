@@ -242,7 +242,7 @@ class Cube2Env(gym.Env):
         for i in range(6):
             for j in range(4):
                 label = int(self.state[i, j])
-                zeros = np.zeros(6)
+                zeros = np.zeros(6, dtype=np.int8)
                 zeros[label] = 1
                 one_hots.append(zeros)
         return np.array(one_hots)

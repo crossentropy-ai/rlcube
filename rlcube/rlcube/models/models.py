@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from tensordict import TensorDict
-from rlcube.envs.cube2 import Cube2
+from rlcube.envs.cube2 import Cube2Env
 import numpy as np
 
 
@@ -20,8 +20,8 @@ class Reward(nn.Module):
         solved = face_solved.all(dim=1)
         return torch.where(
             solved,
-            torch.tensor(1, device=batch_obs.device, dtype=batch_obs.dtype),
-            torch.tensor(-1, device=batch_obs.device, dtype=batch_obs.dtype),
+            torch.tensor(1, device=batch_obs.device, dtype=torch.float32),
+            torch.tensor(-1, device=batch_obs.device, dtype=torch.float32),
         )
 
 
@@ -82,7 +82,7 @@ class DNN(nn.Module):
 
 if __name__ == "__main__":
     print("Testing RewardNet")
-    env = Cube2()
+    env = Cube2Env()
     obs, _ = env.reset()
     obs1, _, _, _, _ = env.step(1)
     obs2, _, _, _, _ = env.step(2)
