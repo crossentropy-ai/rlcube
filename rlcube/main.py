@@ -2,7 +2,8 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi import HTTPException
-from rlcube.envs.cube2 import Cube2
+from rlcube.envs.cube2 import Cube2Env
+from rlcube.models.search import MonteCarloTree
 import numpy as np
 
 app = FastAPI()
@@ -22,12 +23,9 @@ def solve(body: StateArgs):
     ):
         raise HTTPException(status_code=400, detail="state must be a 6x4 matrix")
 
-    env = Cube2()
+    env = Cube2Env()
     env.reset(state=np.array(state, dtype=np.int8))
-
-    steps = []
-    for _ in range(10):
-        action = env.action_space.sample()
-        steps.append(action.item())
-
-    return {"steps": steps}
+    tree = MonteCarloTree(env.obs(), max_simulations=300)
+    if tree.is_solved:
+        return {"steps": [action for _, action in tree.solved_path]}
+    raise HTTPException(status_code=400, detail="Unable to solve the cube")
