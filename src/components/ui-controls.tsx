@@ -27,7 +27,7 @@ export const UIControls = () => {
   } = useControlContext();
 
   const scramble = () => {
-    const scrambleSteps = Array.from({ length: 20 }, () => Actions[Math.floor(Math.random() * Actions.length)]);
+    const scrambleSteps = Array.from({ length: 5 }, () => Actions[Math.floor(Math.random() * Actions.length)]);
     rubiksCubeRef?.current?.rotate(scrambleSteps);
   };
 

@@ -76,7 +76,7 @@ class DNN(nn.Module):
         torch.save(self.state_dict(), filepath)
 
     def load(self, filepath: str):
-        self.load_state_dict(torch.load(filepath))
+        self.load_state_dict(torch.load(filepath, map_location=torch.device("cpu")))
 
 
 class DNN2(nn.Module):
