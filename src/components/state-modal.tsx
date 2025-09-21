@@ -14,7 +14,7 @@ export type StateModalRef = {
 
 export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
   const [state, setState] = useState<Array<Array<number>>>([]);
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useImperativeHandle(ref, () => ({
     open: (state: Array<Array<number>>) => {
@@ -25,27 +25,6 @@ export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
 
   const copy = () => {
     navigator.clipboard.writeText(JSON.stringify(state));
-  };
-
-  const solve = async () => {
-    try {
-      const response = await fetch('/api/solve', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ state }),
-      });
-      if (!response.ok) {
-        throw new Error('Server error', { cause: response });
-      }
-      const { steps } = await response.json();
-      rotationController.addRotationStepCode(...steps);
-      onClose();
-    } catch (err) {
-      alert('An error occurred. Check the console for details.');
-      console.error(err);
-    }
   };
 
   return (
@@ -94,9 +73,6 @@ export const StateModal = forwardRef<StateModalRef, unknown>((_, ref) => {
               </Button>
               <Button color="primary" variant="light" size="sm" onPress={copy}>
                 Copy
-              </Button>
-              <Button color="success" size="sm" onPress={solve}>
-                Solve
               </Button>
             </ModalFooter>
           </>

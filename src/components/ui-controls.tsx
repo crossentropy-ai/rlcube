@@ -14,6 +14,7 @@ import { StateModal, StateModalRef } from './state-modal';
 
 export const UIControls = () => {
   const stateModalRef = useRef<StateModalRef | null>(null);
+  const [isSolving, setIsSolving] = useState(false);
   const [isControlsOpen, setIsControlsOpen] = useState(true);
   const {
     rubiksCubeRef,
@@ -24,10 +25,15 @@ export const UIControls = () => {
     setCubeRoughness,
     cubeSpeed,
     setCubeSpeed,
+    scrambleLength,
+    setScrambleLength,
   } = useControlContext();
 
   const scramble = () => {
-    const scrambleSteps = Array.from({ length: 5 }, () => Actions[Math.floor(Math.random() * Actions.length)]);
+    const scrambleSteps = Array.from(
+      { length: scrambleLength },
+      () => Actions[Math.floor(Math.random() * Actions.length)],
+    );
     rubiksCubeRef?.current?.rotate(scrambleSteps);
   };
 
@@ -41,7 +47,34 @@ export const UIControls = () => {
   };
 
   const train = () => {
-    alert('Working on it!');
+    window.open('https://github.com/crossentropy-ai/rlcube', '_blank');
+  };
+
+  const solve = async () => {
+    try {
+      setIsSolving(true);
+      const response = await fetch('/api/solve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ state: rotationController.getState() }),
+      });
+      if (response.status === 422) {
+        alert('Unable to solve the cube.');
+        return;
+      }
+      if (!response.ok) {
+        throw new Error('Server error', { cause: response });
+      }
+      const { steps } = await response.json();
+      rotationController.addRotationStepCode(...steps);
+    } catch (err) {
+      alert('An error occurred. Check the console for details.');
+      console.error(err);
+    } finally {
+      setIsSolving(false);
+    }
   };
 
   return (
@@ -93,6 +126,15 @@ export const UIControls = () => {
                 maxValue={10}
                 step={1}
               />
+              <Slider
+                size="sm"
+                label="Scramble Length"
+                value={scrambleLength}
+                onChange={(value) => setScrambleLength(value as number)}
+                minValue={1}
+                maxValue={20}
+                step={1}
+              />
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
@@ -100,8 +142,11 @@ export const UIControls = () => {
                   <Button onPress={scramble}>Scramble</Button>
                   <Button onPress={reset}>Reset</Button>
                 </ButtonGroup>
+                <Button variant="light" size="sm" onPress={showState}>
+                  Show State
+                </Button>
 
-                <Button size="sm" className="ms-auto" color="success" onPress={showState}>
+                <Button size="sm" className="ms-auto" color="success" onPress={solve} isLoading={isSolving}>
                   Solve
                 </Button>
               </div>

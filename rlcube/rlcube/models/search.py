@@ -40,7 +40,7 @@ class Node:
 
     def select_action(self):
         scores = self.u()
-        return np.argmax(scores)
+        return np.argmax(scores).item()
 
 
 class MonteCarloTree:
