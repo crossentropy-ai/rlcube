@@ -25,7 +25,7 @@ def solve(body: StateArgs):
 
     env = Cube2Env()
     env.reset(state=np.array(state, dtype=np.int8))
-    tree = MonteCarloTree(env.obs(), max_simulations=2048)
+    tree = MonteCarloTree(env.obs(), max_simulations=256)
     if tree.is_solved:
         return {"steps": [action for _, action in tree.solved_path]}
     raise HTTPException(status_code=422, detail="Unable to solve the cube")
