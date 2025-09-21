@@ -59,6 +59,7 @@ def train(epochs: int = 100):
                 target_values = target_values.detach()
 
                 indices = indices.reshape(-1)
+                indices = indices * masks.reshape(-1)
                 weights = 1 / D.reshape(-1).detach()
 
             loss_v = value_loss_fn(values, target_values).reshape(-1) * weights
