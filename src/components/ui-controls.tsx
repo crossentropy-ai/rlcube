@@ -61,9 +61,6 @@ export const UIControls = () => {
         },
         body: JSON.stringify({ state: rotationController.getState() }),
       });
-      if (!isSolving) {
-        return;
-      }
       if (response.status === 422) {
         alert('Unable to solve the cube.');
         return;
