@@ -28,4 +28,4 @@ def solve(body: StateArgs):
     tree = MonteCarloTree(env.obs(), max_simulations=300)
     if tree.is_solved:
         return {"steps": [action for _, action in tree.solved_path]}
-    raise HTTPException(status_code=400, detail="Unable to solve the cube")
+    raise HTTPException(status_code=422, detail="Unable to solve the cube")
