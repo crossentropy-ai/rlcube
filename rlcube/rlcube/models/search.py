@@ -5,7 +5,7 @@ from rlcube.envs.cube2 import Cube2Env
 from tqdm import tqdm
 
 net = DNN()
-net.load("models/model_best.pth")
+net.load("models/model_final.pth")
 net.eval()
 
 
