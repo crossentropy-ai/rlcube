@@ -222,3 +222,6 @@ __marimo__/
 dataset.pt
 dataset_*.pt
 !dataset_final.pt
+
+# TensorBoard
+runs/
