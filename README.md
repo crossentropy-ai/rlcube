@@ -11,6 +11,8 @@ app_port: 7860
 
 Solve the Rubik's Cube using Reinforcement Learning! 🚀
 
+https://github.com/user-attachments/assets/a44214df-baa7-465f-88c1-8515dec39ead
+
 ## 🏋️‍♂️ Train the Model
 
 1. Navigate to the `rlcube` directory:
