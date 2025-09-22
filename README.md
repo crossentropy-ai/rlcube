@@ -13,6 +13,12 @@ Solve the Rubik's Cube using Reinforcement Learning! 🚀
 
 https://github.com/user-attachments/assets/a44214df-baa7-465f-88c1-8515dec39ead
 
+## How it works
+
+In this reinforcement learning approach to solving the Rubik’s Cube, we begin by training a neural network that learns both a value function and a policy function. The value function evaluates the quality of the current state, while the policy function guides the choice of the next move. To search for the optimal solution, we then apply Monte Carlo Tree Search (MCTS), which balances exploration and exploitation during decision-making.
+
+Our overall algorithm design is inspired by the paper [Solving the Rubik’s Cube with Deep Reinforcement Learning and Search](https://arxiv.org/abs/1805.07470). However, we introduced a few simple modifications in the network component to better suit our implementation.
+
 ## 🏋️‍♂️ Train the Model
 
 1. Navigate to the `rlcube` directory:
