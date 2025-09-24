@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "concurrently \"next start -p 7860\" \"cd rlcube && uv run fastapi run main.py --host 127.0.0.1\"",
-    "lint": "eslint && cd rlcube && uvx ruff check",
-    "format": "prettier --write . && cd rlcube && uvx ruff format"
+    "start": "concurrently \"next start -p 7860\" \"uv run fastapi run main.py --host 127.0.0.1\"",
+    "lint": "eslint && uvx ruff check",
+    "format": "prettier --write . && uvx ruff format"
   },
   "dependencies": {
     "@heroui/react": "^2.8.3",

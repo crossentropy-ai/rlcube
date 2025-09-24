@@ -9,7 +9,7 @@ C_PUCT = 1.414
 VIRTUAL_LOSS = 0.0
 
 net = DNN()
-net.load("models/model_final.pth")
+net.load("checkpoints/checkpoint_final.pth")
 net.eval()
 
 

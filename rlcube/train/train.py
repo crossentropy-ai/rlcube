@@ -26,8 +26,8 @@ def train(epochs: int = 100):
     dataloader = DataLoader(dataset, batch_size=1024, shuffle=True)
     reward = Reward().to(device)
     net = DNN()
-    if os.path.exists("models/model_best.pth"):
-        net.load("models/model_best.pth")
+    if os.path.exists("checkpoints/checkpoint_best.pth"):
+        net.load("checkpoints/checkpoint_best.pth")
     net = net.to(device)
     optimizer = torch.optim.RMSprop(net.parameters(), lr=0.000001)
     value_loss_fn = torch.nn.MSELoss(reduction="none")
@@ -73,7 +73,7 @@ def train(epochs: int = 100):
         if epoch_loss < best_loss:
             best_loss = epoch_loss
             print(f"Saving model at epoch {epoch}")
-            net.save("models/model_best.pth")
+            net.save("checkpoints/checkpoint_best.pth")
         print(f"Epoch {epoch} loss: {epoch_loss}")
 
 
